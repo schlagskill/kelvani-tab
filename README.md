@@ -1,6 +1,6 @@
 # KelvaniTab
 
-KelvaniTab ersetzt die Neuer-Tab-Seite in Chrome oder Edge durch ein persönliches Widget-Dashboard. Version 0.3.2: blaue Hintergründe, ruhige Karten und ein veränderbares Raster. Kostenlos, MIT-lizenziert, ohne Konto. Dies ist eine installierbare Entwicklungsversion; noch kein Store-Release.
+KelvaniTab ersetzt die Neuer-Tab-Seite in Chrome oder Edge durch ein persönliches Widget-Dashboard. Version 0.3.3: blaue Hintergründe, ruhige Karten und ein veränderbares Raster. Kostenlos, MIT-lizenziert, ohne Konto. Dies ist eine installierbare Entwicklungsversion; noch kein Store-Release.
 
 ## Dein Dashboard
 
@@ -50,3 +50,5 @@ Inter: https://rsms.me/inter/ · SIL Open Font License 1.1, siehe assets/Inter-O
 Issues mit Browser-Version und reproduzierbaren Schritten sind willkommen. Keine privaten Backups veröffentlichen.
 
 Weitere Widget-Ideen und Prioritäten: [WIDGET-IDEAS.md](WIDGET-IDEAS.md).
+
+Erweiterungsliste, Browserleiste und Tab-Symbol verwenden das vom Inhaber gelieferte blaue K-Symbol. Bei einem Update die Erweiterung neu laden. Die Symbole ändern die Gestaltung innerhalb der App nicht.

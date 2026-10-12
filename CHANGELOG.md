@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.3 - 2026-10-12
+
+- Add the owner-provided blue K symbol as square PNG extension/action icons in 16, 24, 32, 48 and 128 px, plus a page favicon.
+- Preserve the original proportions and white background; no dashboard logo is reintroduced.
+
 ## 0.3.2 - 2026-10-12
 
 - Replace the header logo/tagline with a right-aligned wordmark and 50 original bilingual random thoughts.

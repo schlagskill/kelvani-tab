@@ -2,8 +2,10 @@
   "manifest_version": 3,
   "name": "KelvaniTab",
   "description": "Deine Neuer-Tab-Seite: Suche, Schnellzugriffe, Aufgaben und Notizen. Lokal und ohne Konto.",
-  "version": "0.3.2",
-  "permissions": ["storage"],
+  "version": "0.3.3",
+  "permissions": [
+    "storage"
+  ],
   "chrome_url_overrides": {
     "newtab": "index.html"
   },
@@ -14,5 +16,22 @@
   "optional_host_permissions": [
     "https://api.open-meteo.com/*",
     "https://geocoding-api.open-meteo.com/*"
-  ]
+  ],
+  "icons": {
+    "16": "assets/icons/icon16.png",
+    "24": "assets/icons/icon24.png",
+    "32": "assets/icons/icon32.png",
+    "48": "assets/icons/icon48.png",
+    "128": "assets/icons/icon128.png"
+  },
+  "action": {
+    "default_title": "KelvaniTab",
+    "default_icon": {
+      "16": "assets/icons/icon16.png",
+      "24": "assets/icons/icon24.png",
+      "32": "assets/icons/icon32.png",
+      "48": "assets/icons/icon48.png",
+      "128": "assets/icons/icon128.png"
+    }
+  }
 }
