@@ -1,3 +1,5 @@
+import { locale, translate } from "./i18n.js";
+import { motivation, randomMotivationIndex } from "./preferences.js";
 import { WALLPAPERS } from "./wallpapers.js";
 import { parseWeather } from "./weather.js";
 import {
@@ -196,17 +198,7 @@ export function mountDashboard({ getState, mutate, flushNotes }) {
   panel("countdown", countdown);
   const inspiration = body("Ein Gedanke für heute"),
     quote = el("blockquote");
-  const thoughts = [
-    "Ein kleiner Schritt ist auch ein Anfang.",
-    "Gib einer Sache heute deine volle Aufmerksamkeit.",
-    "Eine gute Idee braucht Platz, nicht Eile.",
-    "Mach es dir leichter, das Wichtige zu finden.",
-    "Weniger offene Enden. Mehr Raum zum Denken.",
-    "Du bestimmst das Tempo deines Tages.",
-    "Beginne dort, wo du gerade bist.",
-  ];
-  quote.textContent =
-    thoughts[Math.floor(Date.now() / 86400000) % thoughts.length];
+  const thoughtIndex = randomMotivationIndex();
   inspiration.append(quote, el("p", "Kelvani · Tagesimpuls", "widget-hint"));
   panel("inspiration", inspiration);
   const weather = body("Wetter"),
@@ -237,10 +229,16 @@ export function mountDashboard({ getState, mutate, flushNotes }) {
       $("#countdown-dialog").close();
   });
   function renderCalendar() {
-    $(".calendar-title").textContent = calendarMonth(year, month).label;
+    $(".calendar-title").textContent = new Date(
+      year,
+      month,
+      1,
+    ).toLocaleDateString(locale(), { month: "long", year: "numeric" });
     const grid = $("#calendar-days");
     grid.replaceChildren();
-    for (const day of ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"])
+    for (const day of locale() === "en-GB"
+      ? ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+      : ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"])
       grid.append(el("span", day, "weekday"));
     const now = new Date();
     for (const value of calendarMonth(year, month).cells) {
@@ -266,11 +264,11 @@ export function mountDashboard({ getState, mutate, flushNotes }) {
     const state = getState();
     if (!state) return;
     const now = new Date();
-    $("#digital-time").textContent = now.toLocaleTimeString("de-DE", {
+    $("#digital-time").textContent = now.toLocaleTimeString(locale(), {
       hour: "2-digit",
       minute: "2-digit",
     });
-    $("#date").textContent = now.toLocaleDateString("de-DE", {
+    $("#date").textContent = now.toLocaleDateString(locale(), {
       weekday: "long",
       day: "numeric",
       month: "long",
@@ -282,7 +280,7 @@ export function mountDashboard({ getState, mutate, flushNotes }) {
     $(".second-hand").style.rotate = `${now.getSeconds() * 6}deg`;
     const hour = now.getHours();
     $("#greeting").textContent =
-      `${hour < 11 ? "Guten Morgen" : hour < 18 ? "Guten Tag" : "Guten Abend"}${state.dashboard.name ? ", " + state.dashboard.name : "."}`;
+      `${state.dashboard.language === "en" ? (hour < 11 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening") : hour < 11 ? "Guten Morgen" : hour < 18 ? "Guten Tag" : "Guten Abend"}${state.dashboard.name ? ", " + state.dashboard.name : "."}`;
     const seconds = timerSeconds(
       state.dashboard.focus,
       state.dashboard.focusMinutes,
@@ -295,7 +293,7 @@ export function mountDashboard({ getState, mutate, flushNotes }) {
         : state.dashboard.focus?.mode === "paused"
           ? "Fortsetzen"
           : "Start";
-    $("#world-time").textContent = now.toLocaleTimeString("de-DE", {
+    $("#world-time").textContent = now.toLocaleTimeString(locale(), {
       hour: "2-digit",
       minute: "2-digit",
       timeZone: state.dashboard.timezone,
@@ -306,9 +304,11 @@ export function mountDashboard({ getState, mutate, flushNotes }) {
         (Date.parse(target.date) - now.getTime()) / 86400000,
       );
       $("#countdown-value").textContent =
-        days > 0 ? `${days} ${days === 1 ? "Tag" : "Tage"}` : "Termin erreicht";
+        days > 0
+          ? `${days} ${state.dashboard.language === "en" ? (days === 1 ? "day" : "days") : days === 1 ? "Tag" : "Tage"}`
+          : "Termin erreicht";
       $("#countdown-caption").textContent =
-        `${target.title} · ${new Date(target.date).toLocaleString("de-DE")}`;
+        `${target.title} · ${new Date(target.date).toLocaleString(locale())}`;
     }
     if (seconds === 0 && state.dashboard.focus?.mode === "running")
       $("#focus-time").textContent = "Geschafft!";
@@ -347,6 +347,7 @@ export function mountDashboard({ getState, mutate, flushNotes }) {
     const state = getState();
     if (!state) return;
     const data = state.dashboard;
+    quote.textContent = motivation(thoughtIndex, data.language);
     document.body.dataset.wallpaper = data.wallpaper;
     document.body.style.setProperty("--card-opacity", data.opacity / 100);
     const photo = WALLPAPERS[data.wallpaper];
@@ -359,7 +360,7 @@ export function mountDashboard({ getState, mutate, flushNotes }) {
     const credit = $("#photo-credit");
     credit.hidden = !photo;
     if (photo) {
-      credit.textContent = `Foto: ${photo.author} · Pixabay`;
+      credit.textContent = `${data.language === "en" ? "Photo" : "Foto"}: ${photo.author} · Pixabay`;
       credit.href = photo.source;
     }
     for (const article of board.querySelectorAll(".widget")) {
@@ -376,6 +377,7 @@ export function mountDashboard({ getState, mutate, flushNotes }) {
         Math.max(3, ...data.layout.map((i) => i.y + i.h)) + (editMode ? 2 : 0),
       ),
     );
+    $("#edit-layout").hidden = !editMode;
     $("#edit-layout").setAttribute("aria-pressed", editMode);
     $("#edit-layout").textContent = editMode ? "Fertig" : "Layout bearbeiten";
     board.classList.toggle("editing", editMode);
@@ -714,7 +716,7 @@ export function mountDashboard({ getState, mutate, flushNotes }) {
       $("#weather-value").textContent =
         `${Math.round(weather.current.temperature)}°`;
       $("#weather-text").textContent =
-        `${weather.name} · Luftfeuchte ${weather.current.humidity}% · Stand ${new Date(weather.current.fetchedAt).toLocaleString("de-DE", { dateStyle: "short", timeStyle: "short" })} · Open-Meteo`;
+        `${weather.name} · ${getState().dashboard.language === "en" ? "Humidity" : "Luftfeuchte"} ${weather.current.humidity}% · ${getState().dashboard.language === "en" ? "Updated" : "Stand"} ${new Date(weather.current.fetchedAt).toLocaleString(locale(), { dateStyle: "short", timeStyle: "short" })} · Open-Meteo`;
     } else {
       $("#weather-value").textContent = "Bereit für dein Wetter";
       $("#weather-text").textContent =

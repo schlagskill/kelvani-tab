@@ -120,7 +120,7 @@ test("background permits local raster images but rejects executable SVG and remo
 });
 test("invalid opacity, timezones and timer fields are rejected", () => {
   for (const fields of [
-    { opacity: 100 },
+    { opacity: 101 },
     { timezone: "Invalid/Zone" },
     { focusMinutes: 0 },
     { focus: { mode: "running", endAt: NaN, remaining: 1 } },

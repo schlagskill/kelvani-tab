@@ -1,14 +1,16 @@
 # KelvaniTab
 
-KelvaniTab ersetzt die Neuer-Tab-Seite in Chrome oder Edge durch ein persönliches Widget-Dashboard. Version 0.3.1: blaue Hintergründe, ruhige Karten und ein veränderbares Raster. Kostenlos, MIT-lizenziert, ohne Konto. Dies ist eine installierbare Entwicklungsversion; noch kein Store-Release.
+KelvaniTab ersetzt die Neuer-Tab-Seite in Chrome oder Edge durch ein persönliches Widget-Dashboard. Version 0.3.2: blaue Hintergründe, ruhige Karten und ein veränderbares Raster. Kostenlos, MIT-lizenziert, ohne Konto. Dies ist eine installierbare Entwicklungsversion; noch kein Store-Release.
 
 ## Dein Dashboard
 
 Zwölf Widgets: analoge/digitale Uhr mit Begrüßung, Websuche, gruppierte Schnellzugriffe, Monatskalender, Aufgaben, automatisch gespeicherte Notizen, Fokus-Timer, Wetter, Weltuhr, Rechner, Countdown und Tagesimpuls. Sieben sind anfangs sichtbar; weitere lassen sich über **＋ Widgets** hinzufügen. Keine Beispielaufgaben oder Beispiel-Links werden in deine Daten geschrieben.
 
-Mit **Layout bearbeiten** ziehst du Karten am Griff auf das 12-Spalten-Raster. Gleich große Karten tauschen an einem belegten Platz ihre Position; andere betroffene Karten weichen nach unten aus. Ziehe den Pfeil **unten rechts** zum Vergrößern oder Verkleinern: Breite und Höhe rasten ins Raster ein, Nachbarn machen automatisch Platz. Die Pfeiltasten am jeweiligen Griff verschieben bzw. ändern die Größe ebenfalls. Positionen, Größen und Sichtbarkeit werden gespeichert; Ausblenden löscht Inhalte nicht. Unter 900 px werden Karten in lesbaren Spalten angeordnet. Ziehe eine Karte über eine andere, um die Reihenfolge zu ändern, oder verwende die Pfeiltasten. Breite wird dort für die Lesbarkeit angepasst, die eingestellte Größe bleibt für die breite Ansicht gespeichert.
+Mit **Einstellungen → Layout anpassen** ziehst du Karten am Griff auf das 12-Spalten-Raster. Gleich große Karten tauschen an einem belegten Platz ihre Position; andere betroffene Karten weichen nach unten aus. Ziehe den Pfeil **unten rechts** zum Vergrößern oder Verkleinern: Breite und Höhe rasten ins Raster ein, Nachbarn machen automatisch Platz. Die Pfeiltasten am jeweiligen Griff verschieben bzw. ändern die Größe ebenfalls. Positionen, Größen und Sichtbarkeit werden gespeichert; Ausblenden löscht Inhalte nicht. Unter 900 px werden Karten in lesbaren Spalten angeordnet. Ziehe eine Karte über eine andere, um die Reihenfolge zu ändern, oder verwende die Pfeiltasten. Breite wird dort für die Lesbarkeit angepasst, die eingestellte Größe bleibt für die breite Ansicht gespeichert.
 
-**Anpassen** bietet Aurora, eine selbst gezeichnete Bergsee-Illustration, einen schlichten Hintergrund, fünf lokale Pixabay-Fotos und eigene lokale Fotos. Fotos werden verkleinert und lokal gespeichert. Karten-Deckkraft, Begrüßungsname sowie Hell/Dunkel/System sind einstellbar. Der Fokus-Timer bleibt beim Neuladen erhalten. Wetter wird erst nach bewusster Ortsauswahl oder Aktualisierung abgefragt; alte Werte zeigen ihren Zeitstand.
+**Einstellungen → Hintergrund & Darstellung** bietet Aurora, eine selbst gezeichnete Bergsee-Illustration, einen schlichten Hintergrund, fünf lokale Pixabay-Fotos und eigene lokale Fotos. Fotos werden verkleinert und lokal gespeichert. Widget-Transparenz von 0 bis 100 %, sechs Farbschemata (Blau, Violett, Grün, Rosa, Bernstein, Graphit) sowie Hell/Dunkel/System sind einstellbar. Unter **Sonstige Einstellungen** wählst du Deutsch oder Englisch und deinen Begrüßungsnamen. Sprache und Farben bleiben beim Neuladen erhalten. Eigene Notizen, Aufgaben und Linknamen werden nicht übersetzt. Der Fokus-Timer bleibt beim Neuladen erhalten. Wetter wird erst nach bewusster Ortsauswahl oder Aktualisierung abgefragt; alte Werte zeigen ihren Zeitstand.
+
+Die obere Leiste zeigt KelvaniTab als Text rechts und links einen zufälligen eigenen Spruch aus 50 deutsch/englischen Paaren. Pro neu geladenem Tab wird ein Spruch ausgewählt; ein Sprachwechsel zeigt denselben Spruch in der anderen Sprache. Speichermeldungen erscheinen zwei Sekunden als schwebende Meldung, ohne Platz im Raster zu belegen. Rückgängig-Meldungen bleiben acht Sekunden, Fehler bis zur nächsten Meldung.
 
 ## Installation und Aktualisierung
 
@@ -37,7 +39,7 @@ Kein Build-Schritt oder Bibliotheksinstallation nötig. Node.js 22+: `npm test`.
 
 HTTP-Vorschau: `python -m http.server 8080 --bind 127.0.0.1`, dann http://127.0.0.1:8080 öffnen. Vorschau nutzt localStorage, Erweiterung chrome.storage.local. Ihre Daten sind getrennt. Direktes Öffnen als Datei wird nicht unterstützt. Web Locks serialisieren Änderungen mehrerer App-Tabs.
 
-48 Tests prüfen Daten, Speicherung, Migration, Notizkonflikte, Rasterkollisionen, Rechner, Kalender, Timer und Wetterdaten. Browser-Vorschau ersetzt keinen Installationstest. Ergebnisse und offene native Prüfungen: [TESTING.md](TESTING.md).
+55 Tests prüfen Daten, Speicherung, Migration, Notizkonflikte, Rasterkollisionen, Rechner, Kalender, Timer und Wetterdaten. Browser-Vorschau ersetzt keinen Installationstest. Ergebnisse und offene native Prüfungen: [TESTING.md](TESTING.md).
 
 ## Herkunft
 

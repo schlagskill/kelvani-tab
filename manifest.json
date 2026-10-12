@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "KelvaniTab",
   "description": "Deine Neuer-Tab-Seite: Suche, Schnellzugriffe, Aufgaben und Notizen. Lokal und ohne Konto.",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "permissions": ["storage"],
   "chrome_url_overrides": {
     "newtab": "index.html"

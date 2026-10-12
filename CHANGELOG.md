@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.2 - 2026-10-12
+
+- Replace the header logo/tagline with a right-aligned wordmark and 50 original bilingual random thoughts.
+- Add a compact Settings menu for widgets, layout, appearance and general preferences.
+- Add persistent German/English UI, localized dates and six color schemes; keep user-written content unchanged.
+- Expose 0–100% widget transparency with a percentage readout.
+- Dismiss saved notices after two seconds without reserving layout space; retain undo/error handling.
+- Expand preference and migration regressions to 55 tests total.
+
 ## 0.3.1 - 2026-10-12
 
 - Make occupied grid positions usable: equal cards swap; resize and other moves push affected neighbours down.

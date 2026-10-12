@@ -10,9 +10,18 @@ body {
 }
 body[data-wallpaper="aurora"] {
   background-image:
-    radial-gradient(ellipse at 74% 0, #3b75b3 0, transparent 55%),
+    radial-gradient(
+      ellipse at 74% 0,
+      var(--aurora-0, #3b75b3) 0,
+      transparent 55%
+    ),
     radial-gradient(ellipse at 15% 65%, #14335e 0, transparent 50%),
-    linear-gradient(125deg, #091329 8%, #24518b 55%, #071b36);
+    linear-gradient(
+      125deg,
+      #091329 8%,
+      var(--aurora-1, #24518b) 55%,
+      var(--aurora-2, #071b36)
+    );
 }
 body[data-wallpaper="aurora"]:before {
   content: "";
@@ -971,5 +980,103 @@ body[data-theme="sand"] .board {
   }
   .widget-tools .drag-handle {
     touch-action: none;
+  }
+}
+
+.header-motivation {
+  margin: 0;
+  max-width: 660px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: inherit;
+  opacity: 0.85;
+}
+.wordmark {
+  font-weight: 600;
+  align-self: center;
+  font-size: 17px;
+  letter-spacing: -0.4px;
+  white-space: nowrap;
+}
+.settings-anchor {
+  position: relative;
+}
+.settings-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 10px);
+  width: 260px;
+  padding: 6px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: 0 16px 48px #0005;
+  z-index: 20;
+}
+.settings-menu button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  border-radius: 10px;
+  color: var(--text);
+  font-size: 13px;
+  min-height: 44px;
+}
+.settings-menu button:hover,
+.settings-menu button:focus-visible {
+  background: var(--raised);
+}
+#settings-dialog[data-section="appearance"] .general-fields,
+#settings-dialog[data-section="general"] .appearance-fields {
+  display: none;
+}
+#transparency-value {
+  float: right;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+}
+#card-transparency {
+  width: 100%;
+  accent-color: var(--accent);
+}
+#status {
+  position: fixed;
+  top: auto;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: min(600px, calc(100vw - 32px));
+  width: max-content;
+  box-shadow: 0 8px 30px #0005;
+  z-index: 30;
+}
+body .clock-face {
+  background: radial-gradient(
+    ellipse at 30% 10%,
+    color-mix(in srgb, var(--accent) 25%, #102234),
+    color-mix(in srgb, var(--accent) 5%, #07162b)
+  );
+}
+@media (max-width: 900px) {
+  .dashboard-bar {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .header-motivation {
+    font-size: 12px;
+    flex-basis: 100%;
+    order: 2;
+  }
+  .dashboard-actions {
+    margin-left: auto;
+  }
+  .wordmark {
+    font-size: 15px;
+  }
+  .settings-menu {
+    width: 245px;
   }
 }

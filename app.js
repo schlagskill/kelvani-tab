@@ -1,3 +1,9 @@
+import { enableTranslations, setLanguage, locale, translate } from "./i18n.js";
+import {
+  COLOR_SCHEMES,
+  motivation,
+  randomMotivationIndex,
+} from "./preferences.js";
 import { WALLPAPERS, PIXABAY_LICENSE } from "./wallpapers.js";
 import { mountDashboard } from "./dashboard.js";
 import { toggleWidget } from "./layout.js";
@@ -32,6 +38,7 @@ let state,
   notePending,
   unavailable = false;
 let settingsWallpaper, settingsBackground;
+const motivationIndex = randomMotivationIndex();
 const dashboardController = mountDashboard({
   getState: () => state,
   mutate,
@@ -46,9 +53,9 @@ function theme() {
         : "sand"
       : state.theme;
 }
-systemDark.addEventListener("change", () => state && theme());
+systemDark.addEventListener("change", () => state && render());
 function tick() {
-  $("#date").textContent = new Date().toLocaleDateString("de-DE", {
+  $("#date").textContent = new Date().toLocaleDateString(locale(), {
     weekday: "long",
     day: "numeric",
     month: "long",
@@ -68,6 +75,26 @@ function openLink(link = null) {
 function render() {
   const focusId = document.activeElement?.id;
   theme();
+  setLanguage(state.dashboard.language);
+  const palette = COLOR_SCHEMES[state.dashboard.colorScheme],
+    dark = document.body.dataset.theme === "night";
+  for (const target of [document.body, $("#board")]) {
+    target.style.setProperty("--accent", palette.accent[dark ? 1 : 0]);
+    target.style.setProperty("--on-accent", dark ? "#08162b" : "#fff");
+    target.style.setProperty(
+      "--glass-rgb",
+      dark ? palette.glass : "255 255 255",
+    );
+  }
+  document.body.dataset.scheme = state.dashboard.colorScheme;
+  palette.aurora.forEach((color, i) =>
+    document.body.style.setProperty(`--aurora-${i}`, color),
+  );
+  $("#header-motivation").textContent = motivation(
+    motivationIndex,
+    state.dashboard.language,
+  );
+
   $("#engine").value = state.engine;
   $("#groups").replaceChildren();
   for (const [key, title] of Object.entries(GROUPS)) {
@@ -113,7 +140,9 @@ function render() {
         );
         move.setAttribute(
           "aria-label",
-          `${link.title} ${dir < 0 ? "nach vorne" : "nach hinten"} verschieben`,
+          state.dashboard.language === "en"
+            ? `Move ${link.title} ${dir < 0 ? "earlier" : "later"}`
+            : `${link.title} ${dir < 0 ? "nach vorne" : "nach hinten"} verschieben`,
         );
         actions.append(move);
       }
@@ -134,7 +163,9 @@ function render() {
   $("#notes-widget").hidden = !state.widgets.notes;
   $("#tasks").replaceChildren();
   $("#task-count").textContent =
-    `${state.tasks.filter((task) => task.done).length} von ${state.tasks.length} erledigt`;
+    state.dashboard.language === "en"
+      ? `${state.tasks.filter((task) => task.done).length} of ${state.tasks.length} done`
+      : `${state.tasks.filter((task) => task.done).length} von ${state.tasks.length} erledigt`;
   for (const task of state.tasks) {
     const item = el("li"),
       label = el("label", "", task.done ? "done" : ""),
@@ -152,7 +183,12 @@ function render() {
     );
     label.append(check, el("span", task.title));
     const remove = button("×", () => removeTask(task), "icon-button");
-    remove.setAttribute("aria-label", `Aufgabe ${task.title} entfernen`);
+    remove.setAttribute(
+      "aria-label",
+      state.dashboard.language === "en"
+        ? `Remove task ${task.title}`
+        : `Aufgabe ${task.title} entfernen`,
+    );
     item.append(label, remove);
     $("#tasks").append(item);
   }
@@ -252,14 +288,23 @@ async function flushNotes(force = false) {
   if (ok && dirty) return flushNotes();
   return ok;
 }
-function openSettings() {
+function openSettings(section = "appearance") {
   if (unavailable) return;
+  closeSettingsMenu();
+  $("#settings-dialog").dataset.section = section;
+  $("#settings-heading").textContent =
+    section === "general"
+      ? "Sonstige Einstellungen"
+      : "Hintergrund & Darstellung";
   $("#theme").value = state.theme;
+  $("#language").value = state.dashboard.language;
+  $("#color-scheme").value = state.dashboard.colorScheme;
   $("#show-tasks").checked = state.widgets.tasks;
   $("#show-notes").checked = state.widgets.notes;
   $("#settings-error").textContent = "";
   $("#personal-name").value = state.dashboard.name;
-  $("#card-opacity").value = state.dashboard.opacity;
+  $("#card-transparency").value = 100 - state.dashboard.opacity;
+  $("#transparency-value").textContent = `${100 - state.dashboard.opacity}%`;
   settingsWallpaper = state.dashboard.wallpaper;
   settingsBackground = state.dashboard.customBackground;
   $("#background-state").textContent = settingsBackground
@@ -341,8 +386,8 @@ $("#notes").addEventListener("input", () => {
   timer = setTimeout(() => flushNotes(), 350);
 });
 $("#notes").addEventListener("blur", () => flushNotes());
-for (const selector of ["#customize", "#settings", "#hide-widgets"])
-  $(selector).addEventListener("click", openSettings);
+for (const selector of ["#customize", "#hide-widgets"])
+  $(selector).addEventListener("click", () => openSettings("appearance"));
 $("#settings-form").addEventListener("submit", async (event) => {
   event.preventDefault();
   const theme = $("#theme").value,
@@ -366,7 +411,9 @@ $("#settings-form").addEventListener("submit", async (event) => {
           wallpaper: settingsWallpaper,
           customBackground: settingsBackground,
           name: $("#personal-name").value,
-          opacity: Number($("#card-opacity").value),
+          opacity: 100 - Number($("#card-transparency").value),
+          language: $("#language").value,
+          colorScheme: $("#color-scheme").value,
           layout: toggleWidget(
             toggleWidget(current.dashboard.layout, "tasks", widgets.tasks),
             "notes",
@@ -374,13 +421,13 @@ $("#settings-form").addEventListener("submit", async (event) => {
           ),
         },
       }),
-      "Darstellung gespeichert.",
+      "Einstellungen gespeichert.",
     )
   )
     $("#settings-dialog").close();
   else
     $("#settings-error").textContent =
-      "Darstellung konnte nicht gespeichert werden.";
+      "Einstellungen konnten nicht gespeichert werden.";
 });
 $("#export").addEventListener("click", async () => {
   if (!(await flushNotes())) return;
@@ -398,7 +445,9 @@ $("#import").addEventListener("change", async (event) => {
     if (!file) return;
     incoming = await readBackup(file, validateState);
     $("#import-preview").textContent =
-      `${file.name}: ${incoming.links.length} Links, ${incoming.tasks.length} Aufgaben und ${incoming.notes.length} Notizzeichen.`;
+      state.dashboard.language === "en"
+        ? `${file.name}: ${incoming.links.length} links, ${incoming.tasks.length} tasks and ${incoming.notes.length} note characters.`
+        : `${file.name}: ${incoming.links.length} Links, ${incoming.tasks.length} Aufgaben und ${incoming.notes.length} Notizzeichen.`;
     $("#import-error").textContent = "";
     showDialog("#import-dialog");
   } catch (error) {
@@ -535,3 +584,53 @@ $("#background-file").addEventListener("change", async (event) => {
     event.target.value = "";
   }
 });
+
+function closeSettingsMenu(restoreFocus = false) {
+  $("#settings-menu").hidden = true;
+  $("#settings").setAttribute("aria-expanded", "false");
+  if (restoreFocus) $("#settings").focus();
+}
+$("#settings").addEventListener("click", () => {
+  const opening = $("#settings-menu").hidden;
+  $("#settings-menu").hidden = !opening;
+  $("#settings").setAttribute("aria-expanded", String(opening));
+  if (opening) $("#settings-menu button").focus();
+});
+$("#settings-menu").addEventListener("click", (event) => {
+  const action = event.target.closest("[data-setting]")?.dataset.setting;
+  if (!action) return;
+  closeSettingsMenu();
+  if (action === "widgets") $("#widgets-button").click();
+  else if (action === "layout") $("#edit-layout").click();
+  else openSettings(action);
+});
+document.addEventListener("click", (event) => {
+  if (!event.target.closest(".settings-anchor")) closeSettingsMenu();
+});
+document.addEventListener("keydown", (event) => {
+  if ($("#settings-menu").hidden) return;
+  if (event.key === "Escape") {
+    event.preventDefault();
+    closeSettingsMenu(true);
+  }
+  const items = [...$("#settings-menu").querySelectorAll("button")],
+    index = items.indexOf(document.activeElement);
+  if (["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) {
+    event.preventDefault();
+    items[
+      event.key === "Home"
+        ? 0
+        : event.key === "End"
+          ? items.length - 1
+          : (index + (event.key === "ArrowDown" ? 1 : -1) + items.length) %
+            items.length
+    ].focus();
+  }
+});
+$("#card-transparency").addEventListener(
+  "input",
+  () =>
+    ($("#transparency-value").textContent =
+      `${$("#card-transparency").value}%`),
+);
+enableTranslations();

@@ -9,24 +9,50 @@
   </head>
   <body>
     <header class="dashboard-bar">
-      <a
-        class="brand"
-        href="https://kelvani.net"
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Kelvani Website"
-        ><img
-          src="assets/logo.png"
-          alt="KelvaniTab"
-          width="160"
-          height="60" /></a
-      ><span class="dashboard-label">Ein bisschen mehr dein Zuhause.</span>
+      <p id="header-motivation" class="header-motivation"></p>
       <div class="dashboard-actions">
-        <button id="widgets-button" class="toolbar-button">＋ Widgets</button
-        ><button id="edit-layout" class="toolbar-button" aria-pressed="false">
-          Layout bearbeiten</button
-        ><button id="settings" class="toolbar-button">Anpassen</button
-        ><button id="customize" hidden>Anpassen</button>
+        <span class="wordmark">KelvaniTab</span>
+        <button id="widgets-button" class="toolbar-button">＋ Widgets</button>
+        <button
+          id="edit-layout"
+          class="toolbar-button"
+          aria-pressed="false"
+          hidden
+        >
+          Layout bearbeiten
+        </button>
+        <div class="settings-anchor">
+          <button
+            id="settings"
+            class="toolbar-button"
+            aria-haspopup="menu"
+            aria-expanded="false"
+            aria-controls="settings-menu"
+          >
+            Einstellungen
+          </button>
+          <div
+            id="settings-menu"
+            class="settings-menu"
+            role="menu"
+            aria-label="Einstellungen"
+            hidden
+          >
+            <button role="menuitem" data-setting="widgets">
+              Widgets hinzufügen
+            </button>
+            <button role="menuitem" data-setting="layout">
+              Layout anpassen
+            </button>
+            <button role="menuitem" data-setting="appearance">
+              Hintergrund &amp; Darstellung
+            </button>
+            <button role="menuitem" data-setting="general">
+              Sonstige Einstellungen
+            </button>
+          </div>
+        </div>
+        <button id="customize" hidden>Einstellungen</button>
       </div>
     </header>
     <main class="dashboard-shell">
@@ -173,19 +199,55 @@
             ×
           </button>
         </div>
-        <label
-          >Darstellung<select id="theme">
-            <option value="auto">Wie das System</option>
-            <option value="sand">Hell</option>
-            <option value="night">Dunkel</option>
-          </select></label
-        ><label
-          >Dein Name (optional)<input
-            id="personal-name"
-            maxlength="40"
-            placeholder="Wie möchtest du begrüßt werden?"
-        /></label>
-        <fieldset>
+        <fieldset class="general-fields">
+          <legend>Sonstige Einstellungen</legend>
+          <label
+            >Sprache<select id="language">
+              <option value="de">Deutsch</option>
+              <option value="en">English</option>
+            </select></label
+          >
+          <label
+            >Dein Name (optional)<input
+              id="personal-name"
+              maxlength="40"
+              placeholder="Wie möchtest du begrüßt werden?"
+          /></label>
+        </fieldset>
+        <fieldset class="appearance-fields">
+          <legend>Darstellung</legend>
+          <label
+            >Darstellung<select id="theme">
+              <option value="auto">Wie das System</option>
+              <option value="sand">Hell</option>
+              <option value="night">Dunkel</option>
+            </select></label
+          >
+          <label
+            >Farbschema<select id="color-scheme">
+              <option value="blue">Blau</option>
+              <option value="violet">Violett</option>
+              <option value="emerald">Grün</option>
+              <option value="rose">Rosa</option>
+              <option value="amber">Bernstein</option>
+              <option value="slate">Graphit</option>
+            </select></label
+          >
+          <label for="card-transparency"
+            >Widget-Transparenz
+            <output id="transparency-value" for="card-transparency"
+              >24%</output
+            ></label
+          >
+          <input
+            id="card-transparency"
+            type="range"
+            min="0"
+            max="100"
+            value="24"
+          />
+        </fieldset>
+        <fieldset class="appearance-fields">
           <legend>Hintergrund</legend>
           <p class="photo-license">
             Die fünf Fotos stammen von Pixabay.
@@ -224,16 +286,8 @@
           <p id="background-state" class="muted">
             Dein Foto bleibt auf diesem Gerät.
           </p>
-          <label
-            >Karten-Deckkraft<input
-              id="card-opacity"
-              type="range"
-              min="35"
-              max="95"
-              value="76"
-          /></label>
         </fieldset>
-        <fieldset>
+        <fieldset hidden>
           <legend>Zusätzliche Widgets</legend>
           <label class="check-label"
             ><input id="show-tasks" type="checkbox" /> Heute im Fokus</label
@@ -247,22 +301,24 @@
           ><button class="primary">Übernehmen</button>
         </div>
       </form>
-      <hr />
-      <h3>Daten &amp; Backups</h3>
-      <p class="muted">
-        Beim Entfernen der Erweiterung gehen lokale Daten verloren. Sichere
-        vorher ein Backup.
-      </p>
-      <div class="backup-actions">
-        <button id="export" class="secondary">Backup exportieren</button
-        ><button id="import-trigger" class="secondary">Backup laden</button
-        ><input
-          id="import"
-          type="file"
-          accept="application/json,.json"
-          hidden
-        />
-      </div>
+      <section class="general-fields">
+        <hr />
+        <h3>Daten &amp; Backups</h3>
+        <p class="muted">
+          Beim Entfernen der Erweiterung gehen lokale Daten verloren. Sichere
+          vorher ein Backup.
+        </p>
+        <div class="backup-actions">
+          <button id="export" class="secondary">Backup exportieren</button
+          ><button id="import-trigger" class="secondary">Backup laden</button
+          ><input
+            id="import"
+            type="file"
+            accept="application/json,.json"
+            hidden
+          />
+        </div>
+      </section>
     </dialog>
     <dialog id="import-dialog" aria-labelledby="import-heading">
       <h2 id="import-heading">Backup vorab prüfen</h2>

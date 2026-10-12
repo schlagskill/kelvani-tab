@@ -1,3 +1,4 @@
+import { noticeDuration } from "./preferences.js";
 export const $ = (selector) => document.querySelector(selector);
 export function el(tag, text = "", className = "") {
   const node = document.createElement(tag);
@@ -11,12 +12,17 @@ export function button(text, action, className = "secondary") {
   if (action) node.addEventListener("click", action);
   return node;
 }
+let noticeTimer;
 export function notify(message, error = false, undo = null) {
   const box = $("#status");
   box.replaceChildren(el("span", message));
   box.classList.toggle("error", error);
   box.setAttribute("role", error ? "alert" : "status");
   if (undo) box.append(button("Rückgängig", undo, "text-button"));
+  clearTimeout(noticeTimer);
+  const duration = noticeDuration(error, Boolean(undo));
+  if (duration !== null)
+    noticeTimer = setTimeout(() => box.replaceChildren(), duration);
 }
 export function showDialog(selector) {
   const dialog = $(selector),

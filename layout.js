@@ -1,4 +1,5 @@
 import { WALLPAPERS } from "./wallpapers.js";
+import { COLOR_SCHEMES } from "./preferences.js";
 export const COLUMNS = 12;
 export const CATALOG = {
   clock: {
@@ -64,7 +65,7 @@ export const CATALOG = {
   },
   inspiration: {
     title: "Tagesimpuls",
-    description: "Ein ruhiger, täglich wechselnder Gedanke.",
+    description: "Ein zufälliger motivierender Gedanke.",
     w: 4,
     h: 2,
   },
@@ -89,6 +90,8 @@ export const DEFAULT_DASHBOARD = {
   timezone: "Europe/Berlin",
   countdown: null,
   weather: null,
+  language: "de",
+  colorScheme: "blue",
 };
 export const intersects = (a, b) =>
   a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
@@ -225,6 +228,8 @@ export function validateDashboard(
   const data = value === undefined ? structuredClone(DEFAULT_DASHBOARD) : value;
   if (
     !data ||
+    !["de", "en"].includes(data.language ?? "de") ||
+    !Object.hasOwn(COLOR_SCHEMES, data.colorScheme ?? "blue") ||
     ![
       "aurora",
       "mountains",
@@ -239,8 +244,8 @@ export function validateDashboard(
         data.customBackground,
       )) ||
     !Number.isInteger(data.opacity) ||
-    data.opacity < 35 ||
-    data.opacity > 95 ||
+    data.opacity < 0 ||
+    data.opacity > 100 ||
     typeof data.name !== "string" ||
     data.name.length > 40 ||
     !Number.isInteger(data.focusMinutes) ||
@@ -305,6 +310,8 @@ export function validateDashboard(
   for (const type of ["tasks", "notes"])
     layout = toggleWidget(layout, type, widgets[type]);
   return {
+    language: data.language ?? "de",
+    colorScheme: data.colorScheme ?? "blue",
     layout,
     wallpaper: data.wallpaper,
     customBackground: data.customBackground,
