@@ -1,14 +1,134 @@
-import test from 'node:test';
-import assert from 'node:assert/strict';
-import { EMPTY, addLink, editLink, moveLink, saveNotes, validateState } from '../core.js';
-const one = addLink(EMPTY, { title: 'A', url: 'https://example.com/a' }, 'a');
-test('v0.1 backup migrates links, widgets and tasks without losing notes', () => { const state = validateState({ version: 1, theme: 'night', engine: 'bing', notes: 'Keep me', links: [{ id: 'a', title: 'A', url: 'https://example.com' }] }); assert.equal(state.notes, 'Keep me'); assert.equal(state.links[0].group, 'everyday'); assert.deepEqual(state.tasks, []); assert.deepEqual(state.widgets, { tasks: true, notes: true }); });
-test('editing keeps ID and position, can move a link to another group', () => { const next = editLink(one, { title: 'New', url: 'https://example.com/b', group: 'development' }, 'a'); assert.equal(next.links[0].id, 'a'); assert.equal(next.links[0].group, 'development'); assert.equal(one.links[0].title, 'A'); });
-test('duplicate URLs are rejected within a group but allowed across groups', () => { assert.throws(() => addLink(one, { title: 'B', url: 'https://example.com/a' }, 'b')); assert.equal(addLink(one, { title: 'B', url: 'https://example.com/a', group: 'creative' }, 'b').links.length, 2); });
-test('editing missing or duplicate link cannot silently recreate it', () => { assert.throws(() => editLink(one, { title: 'B', url: 'https://example.com/b' }, 'missing')); const two = addLink(one, { title: 'B', url: 'https://example.com/b' }, 'b'); assert.throws(() => editLink(two, { title: 'B', url: 'https://example.com/a' }, 'b')); });
-test('keyboard reorder skips links in other groups', () => { const middle = addLink(one, { title: 'C', url: 'https://example.com/c', group: 'creative' }, 'c'); const all = addLink(middle, { title: 'B', url: 'https://example.com/b' }, 'b'); assert.deepEqual(moveLink(all, 'a', 1).links.map(link => link.id), ['b', 'c', 'a']); assert.deepEqual(all.links.map(link => link.id), ['a', 'c', 'b']); });
-test('reorder does not wrap at first or last position', () => { assert.deepEqual(moveLink(one, 'a', -1), one); assert.deepEqual(moveLink(one, 'a', 1), one); });
-test('task settings and backup are validated and round-trip', () => { const state = validateState({ ...EMPTY, tasks: [{ id: 't', title: ' Task ', done: true }], widgets: { tasks: false, notes: true } }); assert.equal(state.tasks[0].title, 'Task'); assert.deepEqual(validateState(JSON.parse(JSON.stringify(state))), state); assert.throws(() => validateState({ ...EMPTY, tasks: [{ id: 't', title: 'Task', done: 'false' }] })); assert.throws(() => validateState({ ...EMPTY, widgets: { notes: true } })); });
-test('prototype keys cannot become link groups', () => { assert.throws(() => addLink(EMPTY, { title: 'A', url: 'https://example.com', group: '__proto__' }, 'a')); });
-test('concurrent note edit is rejected, explicit overwrite is supported', () => { const state = { ...EMPTY, notes: 'Other tab' }; assert.throws(() => saveNotes(state, 'My draft', ''), { name: 'NoteConflictError' }); assert.equal(state.notes, 'Other tab'); assert.equal(saveNotes(state, 'My draft', '', true).notes, 'My draft'); });
-test('saving an unchanged base does not alter links or settings', () => { const next = saveNotes(one, 'My note', '', false); assert.deepEqual(next.links, one.links); assert.equal(next.notes, 'My note'); });
+import test from "node:test";
+import assert from "node:assert/strict";
+import {
+  EMPTY,
+  addLink,
+  editLink,
+  moveLink,
+  saveNotes,
+  validateState,
+} from "../core.js";
+test("percent-encoded long addresses cannot create a state that fails on reload", () => {
+  assert.throws(
+    () =>
+      validateState({
+        ...EMPTY,
+        links: [
+          {
+            id: "unicode",
+            title: "Unicode",
+            url: "https://example.com/" + "界".repeat(800),
+          },
+        ],
+      }),
+    /lang/,
+  );
+});
+const one = addLink(EMPTY, { title: "A", url: "https://example.com/a" }, "a");
+test("v0.1 backup migrates links, widgets and tasks without losing notes", () => {
+  const state = validateState({
+    version: 1,
+    theme: "night",
+    engine: "bing",
+    notes: "Keep me",
+    links: [{ id: "a", title: "A", url: "https://example.com" }],
+  });
+  assert.equal(state.notes, "Keep me");
+  assert.equal(state.links[0].group, "everyday");
+  assert.deepEqual(state.tasks, []);
+  assert.deepEqual(state.widgets, { tasks: true, notes: true });
+});
+test("editing keeps ID and position, can move a link to another group", () => {
+  const next = editLink(
+    one,
+    { title: "New", url: "https://example.com/b", group: "development" },
+    "a",
+  );
+  assert.equal(next.links[0].id, "a");
+  assert.equal(next.links[0].group, "development");
+  assert.equal(one.links[0].title, "A");
+});
+test("duplicate URLs are rejected within a group but allowed across groups", () => {
+  assert.throws(() =>
+    addLink(one, { title: "B", url: "https://example.com/a" }, "b"),
+  );
+  assert.equal(
+    addLink(
+      one,
+      { title: "B", url: "https://example.com/a", group: "creative" },
+      "b",
+    ).links.length,
+    2,
+  );
+});
+test("editing missing or duplicate link cannot silently recreate it", () => {
+  assert.throws(() =>
+    editLink(one, { title: "B", url: "https://example.com/b" }, "missing"),
+  );
+  const two = addLink(one, { title: "B", url: "https://example.com/b" }, "b");
+  assert.throws(() =>
+    editLink(two, { title: "B", url: "https://example.com/a" }, "b"),
+  );
+});
+test("keyboard reorder skips links in other groups", () => {
+  const middle = addLink(
+    one,
+    { title: "C", url: "https://example.com/c", group: "creative" },
+    "c",
+  );
+  const all = addLink(
+    middle,
+    { title: "B", url: "https://example.com/b" },
+    "b",
+  );
+  assert.deepEqual(
+    moveLink(all, "a", 1).links.map((link) => link.id),
+    ["b", "c", "a"],
+  );
+  assert.deepEqual(
+    all.links.map((link) => link.id),
+    ["a", "c", "b"],
+  );
+});
+test("reorder does not wrap at first or last position", () => {
+  assert.deepEqual(moveLink(one, "a", -1), one);
+  assert.deepEqual(moveLink(one, "a", 1), one);
+});
+test("task settings and backup are validated and round-trip", () => {
+  const state = validateState({
+    ...EMPTY,
+    tasks: [{ id: "t", title: " Task ", done: true }],
+    widgets: { tasks: false, notes: true },
+  });
+  assert.equal(state.tasks[0].title, "Task");
+  assert.deepEqual(validateState(JSON.parse(JSON.stringify(state))), state);
+  assert.throws(() =>
+    validateState({
+      ...EMPTY,
+      tasks: [{ id: "t", title: "Task", done: "false" }],
+    }),
+  );
+  assert.throws(() => validateState({ ...EMPTY, widgets: { notes: true } }));
+});
+test("prototype keys cannot become link groups", () => {
+  assert.throws(() =>
+    addLink(
+      EMPTY,
+      { title: "A", url: "https://example.com", group: "__proto__" },
+      "a",
+    ),
+  );
+});
+test("concurrent note edit is rejected, explicit overwrite is supported", () => {
+  const state = { ...EMPTY, notes: "Other tab" };
+  assert.throws(() => saveNotes(state, "My draft", ""), {
+    name: "NoteConflictError",
+  });
+  assert.equal(state.notes, "Other tab");
+  assert.equal(saveNotes(state, "My draft", "", true).notes, "My draft");
+});
+test("saving an unchanged base does not alter links or settings", () => {
+  const next = saveNotes(one, "My note", "", false);
+  assert.deepEqual(next.links, one.links);
+  assert.equal(next.notes, "My note");
+});

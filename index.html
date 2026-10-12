@@ -1,13 +1,375 @@
 <!doctype html>
-<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light dark"><title>Neuer Tab · KelvaniTab</title><link rel="stylesheet" href="style.css"></head><body>
-<header class="topbar"><a class="brand" href="https://kelvani.net" target="_blank" rel="noopener noreferrer" aria-label="Kelvani Website"><img src="assets/logo.png" alt="KelvaniTab" width="250" height="94"></a><nav id="groups" class="segmented" aria-label="Schnellzugriff-Gruppe"></nav><div class="header-actions"><button id="customize" class="text-button">Anpassen</button><button id="settings" class="text-button">Einstellungen</button></div></header>
-<main><p id="demo" class="preview" hidden>Browser-Vorschau · Als Erweiterung installieren, um die Neuer-Tab-Seite zu ersetzen.</p><div id="status" aria-live="polite" role="status"></div><section class="hero"><p id="date" class="muted"></p><h1>Ein neuer Tab. <span>Dein nächster Schritt.</span></h1></section>
-<form id="search" class="search"><span class="search-icon" aria-hidden="true"></span><label class="sr" for="query">Durchsuche das Web</label><input id="query" maxlength="2000" placeholder="Durchsuche das Web" required><select id="engine" aria-label="Suchmaschine"><option value="duckduckgo">DuckDuckGo</option><option value="google">Google</option><option value="bing">Bing</option></select><button class="primary">Suchen</button></form>
-<section class="shortcuts"><div class="section-heading"><h2>Deine Schnellzugriffe</h2><button id="edit-links" class="text-button" aria-pressed="false">Links bearbeiten</button></div><p id="links-empty" class="empty" hidden>Noch keine Links in dieser Gruppe. Füge deine erste Verknüpfung hinzu.</p><div id="links" class="shortcut-grid"></div></section>
-<div class="widgets"><section id="tasks-widget" class="card"><div class="section-heading"><h2>Heute im Fokus</h2><span id="task-count" class="muted"></span></div><ul id="tasks" class="task-list"></ul><form id="task-form" class="inline-form"><label class="sr" for="task-title">Neue Aufgabe</label><input id="task-title" placeholder="Deinen nächsten Schritt festlegen" maxlength="200" required><button class="text-button">+ Aufgabe</button></form></section><section id="notes-widget" class="card note-card"><div class="section-heading"><h2>Eine schnelle Idee</h2><span id="note-state" role="status">Lokal gespeichert</span></div><label class="sr" for="notes">Deine Notiz</label><textarea id="notes" maxlength="20000" placeholder="Was möchtest du festhalten?"></textarea><button id="note-conflict" class="text-button" hidden>Versionen vergleichen</button></section></div>
-<footer><span>Lokal gespeichert · Kein Konto nötig</span><button id="hide-widgets" class="text-button">Widgets anpassen</button></footer></main>
-<dialog id="link-dialog" aria-labelledby="link-heading"><form id="link-form"><div class="dialog-heading"><h2 id="link-heading">Link hinzufügen</h2><button type="button" data-close class="icon-button" aria-label="Dialog schließen">×</button></div><label>Name<input name="title" maxlength="80" required></label><label>Webadresse<input name="url" type="url" maxlength="4096" placeholder="https://…" required></label><label>Gruppe<select name="group"><option value="everyday">Alltag</option><option value="development">Entwicklung</option><option value="creative">Kreativ</option></select></label><p id="link-error" class="error" role="alert"></p><div class="dialog-actions"><button type="button" data-close class="secondary">Abbrechen</button><button class="primary">Link speichern</button></div></form></dialog>
-<dialog id="settings-dialog" aria-labelledby="settings-heading"><form id="settings-form"><div class="dialog-heading"><h2 id="settings-heading">Deinen neuen Tab anpassen</h2><button type="button" data-close class="icon-button" aria-label="Dialog schließen">×</button></div><label>Darstellung<select id="theme"><option value="auto">Wie das System</option><option value="sand">Hell</option><option value="night">Dunkel</option></select></label><fieldset><legend>Zusätzliche Widgets</legend><label class="check-label"><input id="show-tasks" type="checkbox"> Heute im Fokus</label><label class="check-label"><input id="show-notes" type="checkbox"> Eine schnelle Idee</label></fieldset><p id="settings-error" class="error" role="alert"></p><div class="dialog-actions"><button type="button" data-close class="secondary">Abbrechen</button><button class="primary">Übernehmen</button></div></form><hr><h3>Daten &amp; Backups</h3><p class="muted">Beim Entfernen der Erweiterung gehen lokale Daten verloren. Sichere vorher ein Backup.</p><div class="backup-actions"><button id="export" class="secondary">Backup exportieren</button><button id="import-trigger" class="secondary">Backup laden</button><input id="import" type="file" accept="application/json,.json" hidden></div></dialog>
-<dialog id="import-dialog" aria-labelledby="import-heading"><h2 id="import-heading">Backup vorab prüfen</h2><p id="import-preview"></p><p class="muted">Dieses Backup ersetzt deine Links, Aufgaben, Notizen und Einstellungen. Abbrechen lässt alles unverändert.</p><p id="import-error" class="error" role="alert"></p><div class="dialog-actions"><button type="button" data-close class="secondary">Abbrechen</button><button id="import-confirm" class="danger">Daten ersetzen</button></div></dialog>
-<dialog id="conflict-dialog" aria-labelledby="conflict-heading"><h2 id="conflict-heading">Zwei Versionen deiner Notiz</h2><p>Dein Text bleibt im Notizfeld erhalten. Du kannst den anderen Text kopieren oder bewusst durch deinen ersetzen.</p><label>Version aus dem anderen Tab<textarea id="other-note" readonly></textarea></label><p id="conflict-error" class="error" role="alert"></p><div class="dialog-actions"><button type="button" data-close class="secondary">Zurück zu meinem Text</button><button id="overwrite-note" class="danger">Meinen Text speichern</button></div></dialog>
-<script type="module" src="app.js"></script></body></html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Neuer Tab · KelvaniTab</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="dashboard-bar">
+      <a
+        class="brand"
+        href="https://kelvani.net"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Kelvani Website"
+        ><img
+          src="assets/logo.png"
+          alt="KelvaniTab"
+          width="160"
+          height="60" /></a
+      ><span class="dashboard-label">Ein bisschen mehr dein Zuhause.</span>
+      <div class="dashboard-actions">
+        <button id="widgets-button" class="toolbar-button">＋ Widgets</button
+        ><button id="edit-layout" class="toolbar-button" aria-pressed="false">
+          Layout bearbeiten</button
+        ><button id="settings" class="toolbar-button">Anpassen</button
+        ><button id="customize" hidden>Anpassen</button>
+      </div>
+    </header>
+    <main class="dashboard-shell">
+      <p id="demo" class="preview" hidden>
+        Browser-Vorschau · Deine Daten hier sind getrennt von der installierten
+        Erweiterung.
+      </p>
+      <div id="status" role="status" aria-live="polite"></div>
+      <p id="layout-help" class="layout-help" hidden>
+        Ziehe ein Widget am Griff. Es rastet nur auf freie Plätze ein.
+        Alternativ: Griff fokussieren und Pfeiltasten benutzen. Auf schmalen
+        Fenstern bleibt das Layout lesbar; bearbeite es in einem breiteren
+        Fenster.
+      </p>
+      <div id="board" class="board" aria-label="Dein Widget-Raster"></div>
+      <section id="content-search" class="widget-body search-content">
+        <form id="search" class="search">
+          <span class="search-icon" aria-hidden="true"></span
+          ><label class="sr" for="query">Durchsuche das Web</label
+          ><input
+            id="query"
+            maxlength="2000"
+            placeholder="Durchsuche das Web …"
+            required
+          /><select id="engine" aria-label="Suchmaschine">
+            <option value="duckduckgo">DuckDuckGo</option>
+            <option value="google">Google</option>
+            <option value="bing">Bing</option></select
+          ><button class="primary">Suchen</button>
+        </form>
+      </section>
+      <section id="content-links" class="widget-body links-content">
+        <div class="section-heading">
+          <nav
+            id="groups"
+            class="segmented"
+            aria-label="Schnellzugriff-Gruppe"
+          ></nav>
+          <button id="edit-links" class="text-button" aria-pressed="false">
+            Bearbeiten
+          </button>
+        </div>
+        <p id="links-empty" class="empty" hidden>
+          Hier ist Platz für deine Websites.
+        </p>
+        <div id="links" class="shortcut-grid"></div>
+      </section>
+      <section id="content-tasks" class="widget-body">
+        <div id="tasks-widget">
+          <div class="section-heading">
+            <h2>Heute im Fokus</h2>
+            <span id="task-count" class="muted"></span>
+          </div>
+          <ul id="tasks" class="task-list"></ul>
+          <form id="task-form" class="inline-form">
+            <label class="sr" for="task-title">Neue Aufgabe</label
+            ><input
+              id="task-title"
+              placeholder="Dein nächster Schritt …"
+              maxlength="200"
+              required
+            /><button class="text-button" aria-label="Aufgabe hinzufügen">
+              ＋
+            </button>
+          </form>
+        </div>
+      </section>
+      <section id="content-notes" class="widget-body">
+        <div id="notes-widget">
+          <div class="section-heading">
+            <h2>Gedankenablage</h2>
+            <span id="note-state" role="status">Lokal gespeichert</span>
+          </div>
+          <label class="sr" for="notes">Deine Notiz</label
+          ><textarea
+            id="notes"
+            maxlength="20000"
+            placeholder="Ideen, Pläne, etwas für später …"
+          ></textarea
+          ><button id="note-conflict" class="text-button" hidden>
+            Versionen vergleichen
+          </button>
+        </div>
+      </section>
+      <footer>
+        <span>KelvaniTab · Lokal &amp; ohne Konto</span
+        ><button id="hide-widgets" class="toolbar-button">
+          Hintergrund &amp; Darstellung
+        </button>
+      </footer>
+    </main>
+    <dialog id="link-dialog" aria-labelledby="link-heading">
+      <form id="link-form">
+        <div class="dialog-heading">
+          <h2 id="link-heading">Link hinzufügen</h2>
+          <button
+            type="button"
+            data-close
+            class="icon-button"
+            aria-label="Dialog schließen"
+          >
+            ×
+          </button>
+        </div>
+        <label>Name<input name="title" maxlength="80" required /></label
+        ><label
+          >Webadresse<input
+            name="url"
+            type="url"
+            maxlength="4096"
+            placeholder="https://…"
+            required /></label
+        ><label
+          >Gruppe<select name="group">
+            <option value="everyday">Alltag</option>
+            <option value="development">Entwicklung</option>
+            <option value="creative">Kreativ</option>
+          </select></label
+        >
+        <p id="link-error" class="error" role="alert"></p>
+        <div class="dialog-actions">
+          <button type="button" data-close class="secondary">Abbrechen</button
+          ><button class="primary">Link speichern</button>
+        </div>
+      </form>
+    </dialog>
+    <dialog id="settings-dialog" aria-labelledby="settings-heading">
+      <form id="settings-form">
+        <div class="dialog-heading">
+          <h2 id="settings-heading">Deinen neuen Tab anpassen</h2>
+          <button
+            type="button"
+            data-close
+            class="icon-button"
+            aria-label="Dialog schließen"
+          >
+            ×
+          </button>
+        </div>
+        <label
+          >Darstellung<select id="theme">
+            <option value="auto">Wie das System</option>
+            <option value="sand">Hell</option>
+            <option value="night">Dunkel</option>
+          </select></label
+        ><label
+          >Dein Name (optional)<input
+            id="personal-name"
+            maxlength="40"
+            placeholder="Wie möchtest du begrüßt werden?"
+        /></label>
+        <fieldset>
+          <legend>Hintergrund</legend>
+          <div id="wallpaper-gallery" class="wallpaper-gallery">
+            <button
+              type="button"
+              data-wallpaper="aurora"
+              class="wallpaper-preview aurora"
+            >
+              Aurora</button
+            ><button
+              type="button"
+              data-wallpaper="mountains"
+              class="wallpaper-preview mountains"
+            >
+              Bergsee</button
+            ><button
+              type="button"
+              data-wallpaper="clean"
+              class="wallpaper-preview clean"
+            >
+              Minimal
+            </button>
+          </div>
+          <label
+            >Eigenes Foto<input
+              id="background-file"
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+          /></label>
+          <p id="background-state" class="muted">
+            Dein Foto bleibt auf diesem Gerät.
+          </p>
+          <label
+            >Karten-Deckkraft<input
+              id="card-opacity"
+              type="range"
+              min="35"
+              max="95"
+              value="76"
+          /></label>
+        </fieldset>
+        <fieldset>
+          <legend>Zusätzliche Widgets</legend>
+          <label class="check-label"
+            ><input id="show-tasks" type="checkbox" /> Heute im Fokus</label
+          ><label class="check-label"
+            ><input id="show-notes" type="checkbox" /> Eine schnelle Idee</label
+          >
+        </fieldset>
+        <p id="settings-error" class="error" role="alert"></p>
+        <div class="dialog-actions">
+          <button type="button" data-close class="secondary">Abbrechen</button
+          ><button class="primary">Übernehmen</button>
+        </div>
+      </form>
+      <hr />
+      <h3>Daten &amp; Backups</h3>
+      <p class="muted">
+        Beim Entfernen der Erweiterung gehen lokale Daten verloren. Sichere
+        vorher ein Backup.
+      </p>
+      <div class="backup-actions">
+        <button id="export" class="secondary">Backup exportieren</button
+        ><button id="import-trigger" class="secondary">Backup laden</button
+        ><input
+          id="import"
+          type="file"
+          accept="application/json,.json"
+          hidden
+        />
+      </div>
+    </dialog>
+    <dialog id="import-dialog" aria-labelledby="import-heading">
+      <h2 id="import-heading">Backup vorab prüfen</h2>
+      <p id="import-preview"></p>
+      <p class="muted">
+        Dieses Backup ersetzt deine Links, Aufgaben, Notizen und Einstellungen.
+        Abbrechen lässt alles unverändert.
+      </p>
+      <p id="import-error" class="error" role="alert"></p>
+      <div class="dialog-actions">
+        <button type="button" data-close class="secondary">Abbrechen</button
+        ><button id="import-confirm" class="danger">Daten ersetzen</button>
+      </div>
+    </dialog>
+    <dialog id="conflict-dialog" aria-labelledby="conflict-heading">
+      <h2 id="conflict-heading">Zwei Versionen deiner Notiz</h2>
+      <p>
+        Dein Text bleibt im Notizfeld erhalten. Du kannst den anderen Text
+        kopieren oder bewusst durch deinen ersetzen.
+      </p>
+      <label
+        >Version aus dem anderen Tab<textarea
+          id="other-note"
+          readonly
+        ></textarea>
+      </label>
+      <p id="conflict-error" class="error" role="alert"></p>
+      <div class="dialog-actions">
+        <button type="button" data-close class="secondary">
+          Zurück zu meinem Text</button
+        ><button id="overwrite-note" class="danger">
+          Meinen Text speichern
+        </button>
+      </div>
+    </dialog>
+    <dialog id="widgets-dialog" aria-labelledby="widgets-heading">
+      <div class="dialog-heading">
+        <h2 id="widgets-heading">Dein Tab, deine Elemente</h2>
+        <button
+          type="button"
+          data-close
+          class="icon-button"
+          aria-label="Dialog schließen"
+        >
+          ×
+        </button>
+      </div>
+      <p>
+        Wähle deine Widgets. Ausblenden entfernt keine Links, Aufgaben oder
+        Notizen. Neue Widgets finden einen freien Rasterplatz.
+      </p>
+      <div id="widget-catalog" class="widget-catalog"></div>
+      <div class="dialog-actions">
+        <button id="reset-layout" class="secondary">Standard-Layout</button
+        ><button type="button" data-close class="primary">Fertig</button>
+      </div>
+    </dialog>
+    <dialog id="countdown-dialog" aria-labelledby="countdown-heading">
+      <form id="countdown-form">
+        <div class="dialog-heading">
+          <h2 id="countdown-heading">Dein nächster Termin</h2>
+          <button
+            type="button"
+            data-close
+            class="icon-button"
+            aria-label="Dialog schließen"
+          >
+            ×
+          </button>
+        </div>
+        <label
+          >Bezeichnung<input
+            id="countdown-title"
+            maxlength="80"
+            required /></label
+        ><label
+          >Datum und Uhrzeit<input
+            id="countdown-date"
+            type="datetime-local"
+            required
+        /></label>
+        <div class="dialog-actions">
+          <button type="button" data-close class="secondary">Abbrechen</button
+          ><button class="primary">Termin speichern</button>
+        </div>
+      </form>
+    </dialog>
+    <dialog id="weather-dialog" aria-labelledby="weather-heading">
+      <div class="dialog-heading">
+        <h2 id="weather-heading">Wetter für deinen Ort</h2>
+        <button
+          type="button"
+          data-close
+          class="icon-button"
+          aria-label="Dialog schließen"
+        >
+          ×
+        </button>
+      </div>
+      <p>
+        Die Ortssuche und Wetterabfrage gehen an Open-Meteo. Keine GPS-Abfrage.
+        Wetter wird nur auf deinen Klick aktualisiert.
+      </p>
+      <form id="weather-form">
+        <label
+          >Stadt<input
+            id="weather-city"
+            maxlength="100"
+            required
+            placeholder="z. B. Hamburg" /></label
+        ><button class="primary">Ort suchen</button>
+      </form>
+      <p id="weather-error" role="alert" class="error"></p>
+      <div id="weather-results"></div>
+      <a
+        href="https://open-meteo.com/"
+        target="_blank"
+        rel="noopener noreferrer"
+        >Wetterdaten: Open-Meteo</a
+      >
+    </dialog>
+    <script type="module" src="app.js"></script>
+  </body>
+</html>

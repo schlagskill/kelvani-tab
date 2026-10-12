@@ -1,46 +1,48 @@
 # KelvaniTab
 
-KelvaniTab ersetzt die Neuer-Tab-Seite in Chrome oder Edge. Version 0.2.0 bietet eine zentrale Websuche, Schnellzugriffe in Alltag/Entwicklung/Kreativ, Hinzufügen/Bearbeiten/Entfernen mit Rückgängig, Reihenfolge per Tastatur, optionale Aufgaben und automatisch gespeicherte Notizen. Darstellung: Hell, Dunkel oder System.
+KelvaniTab ersetzt die Neuer-Tab-Seite in Chrome oder Edge durch ein persönliches Widget-Dashboard. Version 0.3.0: blaue Hintergründe, ruhige Karten und ein veränderbares Raster. Kostenlos, MIT-lizenziert, ohne Konto. Dies ist eine installierbare Entwicklungsversion; noch kein Store-Release.
 
-Kostenlos, MIT-lizenziert, ohne Konto oder Server. Oberfläche auf Deutsch. Dies ist eine installierbare **Entwicklungsversion**, noch kein Chrome-Web-Store-/Edge-Add-ons-Release.
+## Dein Dashboard
 
-## In Chrome oder Edge installieren
+Zwölf Widgets: analoge/digitale Uhr mit Begrüßung, Websuche, gruppierte Schnellzugriffe, Monatskalender, Aufgaben, automatisch gespeicherte Notizen, Fokus-Timer, Wetter, Weltuhr, Rechner, Countdown und Tagesimpuls. Sieben sind anfangs sichtbar; weitere lassen sich über **＋ Widgets** hinzufügen. Keine Beispielaufgaben oder Beispiel-Links werden in deine Daten geschrieben.
 
-1. Repository als ZIP herunterladen und entpacken (oder das vorbereitete Erweiterungspaket verwenden).
-2. `chrome://extensions` bzw. `edge://extensions` öffnen und **Entwicklermodus** einschalten.
+Mit **Layout bearbeiten** ziehst du Karten am Griff auf das 12-Spalten-Raster. Belegte Plätze werden abgelehnt, Karten überlappen nicht. Die Pfeiltasten am fokussierten Griff verschieben eine Rasterzelle. Drei Größen sind verfügbar, sofern ausreichend Platz frei ist. Positionen und Sichtbarkeit werden gespeichert; Ausblenden löscht Inhalte nicht. Unter 900 px werden Karten automatisch in lesbare Spalten angeordnet; bearbeite das Raster in einem breiteren Fenster.
+
+**Anpassen** bietet Aurora, eine selbst gezeichnete Bergsee-Illustration, einen schlichten Hintergrund und eigene lokale Fotos. Fotos werden verkleinert und lokal gespeichert. Karten-Deckkraft, Begrüßungsname sowie Hell/Dunkel/System sind einstellbar. Der Fokus-Timer bleibt beim Neuladen erhalten. Wetter wird erst nach bewusster Ortsauswahl oder Aktualisierung abgefragt; alte Werte zeigen ihren Zeitstand.
+
+## Installation und Aktualisierung
+
+1. Erweiterungspaket herunterladen und entpacken.
+2. `chrome://extensions` oder `edge://extensions` öffnen, **Entwicklermodus** einschalten.
 3. **Entpackt laden** wählen und den Ordner mit `manifest.json` auswählen.
-4. Einen neuen Tab öffnen und die Änderung der Neuer-Tab-Seite bestätigen, falls der Browser nachfragt. Andere Neuer-Tab-Erweiterungen können kollidieren.
+4. Einen neuen Tab öffnen; die Änderung bestätigen, falls der Browser nachfragt. Andere Neuer-Tab-Erweiterungen können kollidieren.
 
-Zum Aktualisieren zuerst ein Backup exportieren, Dateien im selben Erweiterungsordner austauschen und die Erweiterung auf der Erweiterungsseite neu laden. Ein neuer Installationsordner kann eine andere Erweiterungs-ID und getrennte Daten erzeugen.
+Zum Aktualisieren zuerst ein Backup exportieren, Dateien im selben Erweiterungsordner austauschen und die Erweiterung neu laden. Ein anderer Ordner kann getrennte Daten erzeugen. Chrome behält zunächst den Fokus in der Adressleiste; Inkognito-Neuer-Tab wird nicht ersetzt.
 
 ## Datenschutz und Rechte
 
-Nur `storage`. Keine History-, Bookmark- oder Website-Zugriffsrechte. Suche sendet den Suchbegriff erst beim Absenden an den gewählten Anbieter. Schnellzugriffe verwenden lokale Initialen; externe Favicon-Dienste werden nicht kontaktiert. Chrome-Neuer-Tab behält zunächst den Fokus in der Adressleiste. Inkognito-Neuer-Tab wird von Chrome nicht ersetzt.
+Grundberechtigung: `storage`. Keine History- oder Bookmark-Rechte. Das Wetter-Widget kann optional Zugriff auf `api.open-meteo.com` und `geocoding-api.open-meteo.com` anfordern. Es übermittelt die eingegebene Ortssuche und die Koordinaten des ausgewählten Orts, verwendet aber keine GPS-Ortung. Ohne Nutzung erfolgen keine Wetteranfragen. Anbieter: [Open-Meteo](https://open-meteo.com/en/docs), mit dessen Nutzungsbedingungen.
 
-Alle App-Assets und Schriften sind lokal. Keine Telemetrie, Remote-Scripts, Remote-Fonts oder Cloud-Synchronisierung. Der Markenlink öffnet kelvani.net nur auf Klick. Das Projekt benötigt keine gehostete Domain. Normales Öffnen einer gespeicherten Website kontaktiert diese Website.
+Suche übermittelt den Suchbegriff erst beim Absenden an den gewählten Anbieter. Schnellzugriffe verwenden lokale Initialen; keine Favicon-Dienste. Assets und Schriften sind lokal. Keine Telemetrie, Remote-Scripts, Remote-Fonts oder Cloud-Synchronisierung. Markenlink und gespeicherte Websites werden nur beim Öffnen kontaktiert. Fotos werden nicht hochgeladen.
 
-Beim Deinstallieren gehen Erweiterungsdaten verloren: vorher exportieren. Backups enthalten persönliche Links/Notizen bzw. Tab-URLs und sollten privat bleiben. Es werden nur HTTP(S)-URLs ohne eingebettete Zugangsdaten akzeptiert.
+Deinstallation löscht Erweiterungsdaten: vorher exportieren. Backups enthalten persönliche Links, Notizen, Einstellungen und gegebenenfalls dein Hintergrundfoto und sollten privat bleiben. Nur HTTP(S)-URLs ohne eingebettete Zugangsdaten sind erlaubt.
 
-## Verhalten und Grenzen
+## Daten und Grenzen
 
-100 Links, 100 Aufgaben, 20.000 Notizzeichen, Import bis 2 MB. v0.1-Backups werden übernommen; alte Links gehören zu Alltag. Import ersetzt Daten erst nach Vorschau und ausdrücklicher Bestätigung. Notizen speichern nach 350 ms Tipp-Pause oder Fokuswechsel. Vor dem Schließen den Speicherstatus prüfen. Bei konkurrierenden Änderungen bleiben beide Versionen sichtbar, statt den anderen Tab still zu überschreiben.
+100 Links, 100 Aufgaben, 20.000 Notizzeichen, Import bis 2 MB. v0.1- und v0.2-Daten bleiben erhalten; alte Links gehören zu Alltag. Backups enthalten auch Layout und Hintergrund. Import ersetzt Daten erst nach Vorschau und Bestätigung. Notizen speichern nach 350 ms Tipp-Pause oder Fokuswechsel. Vor dem Schließen Speicherstatus prüfen. Bei konkurrierenden Änderungen bleiben beide Notizversionen sichtbar.
 
-## Entwickeln und prüfen
+## Entwicklung
 
-Keine Bibliotheksinstallation und kein Build-Schritt nötig. Node.js 22+:
+Kein Build-Schritt oder Bibliotheksinstallation nötig. Node.js 22+: `npm test`.
 
-```sh
-npm test
-```
+HTTP-Vorschau: `python -m http.server 8080 --bind 127.0.0.1`, dann http://127.0.0.1:8080 öffnen. Vorschau nutzt localStorage, Erweiterung chrome.storage.local. Ihre Daten sind getrennt. Direktes Öffnen als Datei wird nicht unterstützt. Web Locks serialisieren Änderungen mehrerer App-Tabs.
 
-HTTP-Vorschau: `python -m http.server 8080 --bind 127.0.0.1`, dann http://127.0.0.1:8080 öffnen. Die Vorschau nutzt localStorage, Erweiterungen chrome.storage.local. Vorschau- und Erweiterungsdaten sind getrennt. HTML direkt vom Dateisystem zu öffnen wird nicht unterstützt. Web Locks serialisiert Änderungen mehrerer App-Tabs.
+42 Tests prüfen Daten, Speicherung, Migration, Notizkonflikte, Rasterkollisionen, Rechner, Kalender, Timer und Wetterdaten. Browser-Vorschau ersetzt keinen Installationstest. Ergebnisse und offene native Prüfungen: [TESTING.md](TESTING.md).
 
-Automatisierte Tests prüfen Datenlogik und Speicherung, Migration, Gruppen und Notiz-Konflikte. UI-Abläufe werden in der HTTP-Browser-Vorschau geprüft. Das ersetzt keinen echten Installationstest in Chrome und Edge. Die verbleibenden nativen Prüfungen und Ergebnisse stehen in [TESTING.md](TESTING.md).
+## Herkunft
 
-## Herkunft und Assets
+Eigenständiger Kelvani-Code für schlagskill mit OpenAI-Coding-Unterstützung. Original-Logo vom Projektinhaber, unverändert. Bergsee-SVG und Aurora-Hintergrund wurden für dieses Projekt erstellt. Referenzbilder inspirierten die Anordnung; deren Bilder und Code werden nicht mitgeliefert. Keine fremde Repository-Historie oder fremden Spendenlinks.
 
-Eigenständiger Kelvani-Code für schlagskill mit OpenAI-Coding-Unterstützung. Design nach dem Kelvani-Brandbook v3; Original-Logo vom Projektinhaber, unverändert. Keine fremde Repository-Historie und keine fremden Spendenlinks.
+Inter: https://rsms.me/inter/ · SIL Open Font License 1.1, siehe assets/Inter-OFL.txt. Code: MIT, siehe LICENSE. Die Logo-Datei ist für die Marke mitgeliefert; die Code-Lizenz ist keine Erlaubnis, als Kelvani aufzutreten. Store-Assets stehen noch aus.
 
-Inter: https://rsms.me/inter/ · SIL Open Font License 1.1, siehe assets/Inter-OFL.txt. Code: MIT, siehe LICENSE. Die Logo-Datei wird für die Marke mitgeliefert; die Code-Lizenz ist keine Erlaubnis, als Kelvani aufzutreten. Toolbar-Symbol-Master und Store-Assets stehen noch aus.
-
-Issues mit Browser-Version, Schritten sowie erwartetem/tatsächlichem Verhalten sind willkommen. Keine privaten Daten oder echten Backups veröffentlichen.
+Issues mit Browser-Version und reproduzierbaren Schritten sind willkommen. Keine privaten Backups veröffentlichen.
