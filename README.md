@@ -1,14 +1,14 @@
 # KelvaniTab
 
-KelvaniTab ersetzt die Neuer-Tab-Seite in Chrome oder Edge durch ein persönliches Widget-Dashboard. Version 0.3.0: blaue Hintergründe, ruhige Karten und ein veränderbares Raster. Kostenlos, MIT-lizenziert, ohne Konto. Dies ist eine installierbare Entwicklungsversion; noch kein Store-Release.
+KelvaniTab ersetzt die Neuer-Tab-Seite in Chrome oder Edge durch ein persönliches Widget-Dashboard. Version 0.3.1: blaue Hintergründe, ruhige Karten und ein veränderbares Raster. Kostenlos, MIT-lizenziert, ohne Konto. Dies ist eine installierbare Entwicklungsversion; noch kein Store-Release.
 
 ## Dein Dashboard
 
 Zwölf Widgets: analoge/digitale Uhr mit Begrüßung, Websuche, gruppierte Schnellzugriffe, Monatskalender, Aufgaben, automatisch gespeicherte Notizen, Fokus-Timer, Wetter, Weltuhr, Rechner, Countdown und Tagesimpuls. Sieben sind anfangs sichtbar; weitere lassen sich über **＋ Widgets** hinzufügen. Keine Beispielaufgaben oder Beispiel-Links werden in deine Daten geschrieben.
 
-Mit **Layout bearbeiten** ziehst du Karten am Griff auf das 12-Spalten-Raster. Belegte Plätze werden abgelehnt, Karten überlappen nicht. Die Pfeiltasten am fokussierten Griff verschieben eine Rasterzelle. Drei Größen sind verfügbar, sofern ausreichend Platz frei ist. Positionen und Sichtbarkeit werden gespeichert; Ausblenden löscht Inhalte nicht. Unter 900 px werden Karten automatisch in lesbare Spalten angeordnet; bearbeite das Raster in einem breiteren Fenster.
+Mit **Layout bearbeiten** ziehst du Karten am Griff auf das 12-Spalten-Raster. Gleich große Karten tauschen an einem belegten Platz ihre Position; andere betroffene Karten weichen nach unten aus. Ziehe den Pfeil **unten rechts** zum Vergrößern oder Verkleinern: Breite und Höhe rasten ins Raster ein, Nachbarn machen automatisch Platz. Die Pfeiltasten am jeweiligen Griff verschieben bzw. ändern die Größe ebenfalls. Positionen, Größen und Sichtbarkeit werden gespeichert; Ausblenden löscht Inhalte nicht. Unter 900 px werden Karten in lesbaren Spalten angeordnet. Ziehe eine Karte über eine andere, um die Reihenfolge zu ändern, oder verwende die Pfeiltasten. Breite wird dort für die Lesbarkeit angepasst, die eingestellte Größe bleibt für die breite Ansicht gespeichert.
 
-**Anpassen** bietet Aurora, eine selbst gezeichnete Bergsee-Illustration, einen schlichten Hintergrund und eigene lokale Fotos. Fotos werden verkleinert und lokal gespeichert. Karten-Deckkraft, Begrüßungsname sowie Hell/Dunkel/System sind einstellbar. Der Fokus-Timer bleibt beim Neuladen erhalten. Wetter wird erst nach bewusster Ortsauswahl oder Aktualisierung abgefragt; alte Werte zeigen ihren Zeitstand.
+**Anpassen** bietet Aurora, eine selbst gezeichnete Bergsee-Illustration, einen schlichten Hintergrund, fünf lokale Pixabay-Fotos und eigene lokale Fotos. Fotos werden verkleinert und lokal gespeichert. Karten-Deckkraft, Begrüßungsname sowie Hell/Dunkel/System sind einstellbar. Der Fokus-Timer bleibt beim Neuladen erhalten. Wetter wird erst nach bewusster Ortsauswahl oder Aktualisierung abgefragt; alte Werte zeigen ihren Zeitstand.
 
 ## Installation und Aktualisierung
 
@@ -37,12 +37,14 @@ Kein Build-Schritt oder Bibliotheksinstallation nötig. Node.js 22+: `npm test`.
 
 HTTP-Vorschau: `python -m http.server 8080 --bind 127.0.0.1`, dann http://127.0.0.1:8080 öffnen. Vorschau nutzt localStorage, Erweiterung chrome.storage.local. Ihre Daten sind getrennt. Direktes Öffnen als Datei wird nicht unterstützt. Web Locks serialisieren Änderungen mehrerer App-Tabs.
 
-42 Tests prüfen Daten, Speicherung, Migration, Notizkonflikte, Rasterkollisionen, Rechner, Kalender, Timer und Wetterdaten. Browser-Vorschau ersetzt keinen Installationstest. Ergebnisse und offene native Prüfungen: [TESTING.md](TESTING.md).
+48 Tests prüfen Daten, Speicherung, Migration, Notizkonflikte, Rasterkollisionen, Rechner, Kalender, Timer und Wetterdaten. Browser-Vorschau ersetzt keinen Installationstest. Ergebnisse und offene native Prüfungen: [TESTING.md](TESTING.md).
 
 ## Herkunft
 
 Eigenständiger Kelvani-Code für schlagskill mit OpenAI-Coding-Unterstützung. Original-Logo vom Projektinhaber, unverändert. Bergsee-SVG und Aurora-Hintergrund wurden für dieses Projekt erstellt. Referenzbilder inspirierten die Anordnung; deren Bilder und Code werden nicht mitgeliefert. Keine fremde Repository-Historie oder fremden Spendenlinks.
 
-Inter: https://rsms.me/inter/ · SIL Open Font License 1.1, siehe assets/Inter-OFL.txt. Code: MIT, siehe LICENSE. Die Logo-Datei ist für die Marke mitgeliefert; die Code-Lizenz ist keine Erlaubnis, als Kelvani aufzutreten. Store-Assets stehen noch aus.
+Inter: https://rsms.me/inter/ · SIL Open Font License 1.1, siehe assets/Inter-OFL.txt. Code: MIT, siehe LICENSE. Die Logo-Datei ist für die Marke mitgeliefert; die Code-Lizenz ist keine Erlaubnis, als Kelvani aufzutreten. Store-Assets stehen noch aus. Die fünf Fotografien sind separat unter der Pixabay-Inhaltslizenz lizenziert, nicht MIT; Fotografen, Quellen und Bedingungen stehen in [assets/wallpapers/CREDITS.md](assets/wallpapers/CREDITS.md).
 
 Issues mit Browser-Version und reproduzierbaren Schritten sind willkommen. Keine privaten Backups veröffentlichen.
+
+Weitere Widget-Ideen und Prioritäten: [WIDGET-IDEAS.md](WIDGET-IDEAS.md).

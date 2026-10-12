@@ -36,10 +36,10 @@
       </p>
       <div id="status" role="status" aria-live="polite"></div>
       <p id="layout-help" class="layout-help" hidden>
-        Ziehe ein Widget am Griff. Es rastet nur auf freie Plätze ein.
-        Alternativ: Griff fokussieren und Pfeiltasten benutzen. Auf schmalen
-        Fenstern bleibt das Layout lesbar; bearbeite es in einem breiteren
-        Fenster.
+        Ziehe ein Widget am Griff. Die anderen Karten machen im Raster Platz.
+        Ziehe die Ecke unten rechts zum Vergrößern. Alternativ: Griff
+        fokussieren und Pfeiltasten benutzen. In schmalen Fenstern ziehst du die
+        Karte über eine andere Karte, um die Reihenfolge zu ändern.
       </p>
       <div id="board" class="board" aria-label="Dein Widget-Raster"></div>
       <section id="content-search" class="widget-body search-content">
@@ -112,7 +112,14 @@
         </div>
       </section>
       <footer>
-        <span>KelvaniTab · Lokal &amp; ohne Konto</span
+        <span
+          >KelvaniTab · Lokal &amp; ohne Konto
+          <a
+            id="photo-credit"
+            hidden
+            target="_blank"
+            rel="noopener noreferrer"
+          ></a></span
         ><button id="hide-widgets" class="toolbar-button">
           Hintergrund &amp; Darstellung
         </button>
@@ -180,6 +187,13 @@
         /></label>
         <fieldset>
           <legend>Hintergrund</legend>
+          <p class="photo-license">
+            Die fünf Fotos stammen von Pixabay.
+            <a id="pixabay-license" target="_blank" rel="noopener noreferrer"
+              >Inhaltslizenz</a
+            >
+            · Fotograf und Quelle unter jedem Foto.
+          </p>
           <div id="wallpaper-gallery" class="wallpaper-gallery">
             <button
               type="button"

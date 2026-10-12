@@ -1,5 +1,12 @@
+import { WALLPAPERS } from "./wallpapers.js";
 import { parseWeather } from "./weather.js";
-import { CATALOG, DEFAULT_LAYOUT, moveWidget, toggleWidget } from "./layout.js";
+import {
+  CATALOG,
+  DEFAULT_LAYOUT,
+  arrangeWidget,
+  reorderWidget,
+  toggleWidget,
+} from "./layout.js";
 import { calculate, calendarMonth, timerSeconds } from "./widget-math.js";
 import { $, el, button, notify, showDialog } from "./ui.js";
 
@@ -19,27 +26,19 @@ export function mountDashboard({ getState, mutate, flushNotes }) {
     handle.setAttribute("aria-label", `${CATALOG[type].title} verschieben`);
     handle.title = "Ziehen oder mit Pfeiltasten verschieben";
     handle.dataset.handle = type;
-    const resize = el("select");
-    resize.setAttribute("aria-label", `${CATALOG[type].title} Größe`);
-    for (const [value, label] of [
-      ["normal", "Normal"],
-      ["wide", "Breit"],
-      ["large", "Groß"],
-    ]) {
-      const option = el("option", label);
-      option.value = value;
-      resize.append(option);
-    }
-    resize.addEventListener("change", () => changeSize(type, resize.value));
+    const resize = button("↘", null, "resize-grip");
+    resize.setAttribute("aria-label", `${CATALOG[type].title} Größe ändern`);
+    resize.title = "Ziehen zum Vergrößern; Pfeiltasten ändern die Größe";
+    resize.dataset.resize = type;
+    resize.addEventListener("pointerdown", startDrag);
+    resize.addEventListener("keydown", (event) => keyboardResize(event, type));
     const hide = button("×", () => setVisible(type, false), "icon-button");
     hide.setAttribute("aria-label", `${CATALOG[type].title} ausblenden`);
-    tools.append(handle, resize, hide);
-    article.append(tools, body);
+    tools.append(handle, hide);
+    article.append(tools, body, resize);
     board.append(article);
     handle.addEventListener("pointerdown", startDrag);
-    handle.addEventListener("pointermove", drag);
-    handle.addEventListener("pointerup", endDrag);
-    handle.addEventListener("pointercancel", cancelDrag);
+
     handle.addEventListener("keydown", (event) => keyboardMove(event, type));
     return article;
   }
@@ -341,25 +340,28 @@ export function mountDashboard({ getState, mutate, flushNotes }) {
   function place(article, item) {
     article.style.gridColumn = `${item.x + 1} / span ${item.w}`;
     article.style.gridRow = `${item.y + 1} / span ${item.h}`;
-    const resize = article.querySelector(".widget-tools select");
-    if (resize)
-      resize.value =
-        item.h > CATALOG[item.type].h
-          ? "large"
-          : item.w > CATALOG[item.type].w
-            ? "wide"
-            : "normal";
+    article.style.setProperty("--widget-rows", item.h);
   }
+
   function paint() {
     const state = getState();
     if (!state) return;
     const data = state.dashboard;
     document.body.dataset.wallpaper = data.wallpaper;
     document.body.style.setProperty("--card-opacity", data.opacity / 100);
+    const photo = WALLPAPERS[data.wallpaper];
     document.body.style.backgroundImage =
       data.wallpaper === "custom" && data.customBackground
         ? `linear-gradient(#06182d66,#06182d66), url("${data.customBackground}")`
-        : "";
+        : photo
+          ? `linear-gradient(#06182d55,#06182d77), url("assets/wallpapers/${photo.file}")`
+          : "";
+    const credit = $("#photo-credit");
+    credit.hidden = !photo;
+    if (photo) {
+      credit.textContent = `Foto: ${photo.author} · Pixabay`;
+      credit.href = photo.source;
+    }
     for (const article of board.querySelectorAll(".widget")) {
       const item = data.layout.find((i) => i.type === article.dataset.widget);
       article.hidden = !item;
@@ -439,7 +441,7 @@ export function mountDashboard({ getState, mutate, flushNotes }) {
     busy = true;
     try {
       const current = getState().dashboard.layout;
-      const next = moveWidget(current, type, x, y, size);
+      const next = arrangeWidget(current, type, x, y, size);
       await mutate((s) => {
         if (expected && JSON.stringify(s.dashboard.layout) !== expected)
           throw new Error(
@@ -448,53 +450,62 @@ export function mountDashboard({ getState, mutate, flushNotes }) {
         return { ...s, dashboard: { ...s.dashboard, layout: next } };
       }, "Position im Raster gespeichert.");
     } catch (error) {
-      notify(
-        "Dieser Rasterplatz ist belegt oder außerhalb der Fläche. " +
-          error.message,
-        true,
-      );
+      notify("Das Layout konnte nicht geändert werden. " + error.message, true);
     } finally {
       busy = false;
       paint();
     }
   }
+  // Document listeners survive moving the captured card in the CSS grid.
+  document.addEventListener("pointermove", drag, { passive: false });
+  document.addEventListener("pointerup", endDrag);
+  document.addEventListener("pointercancel", cancelDrag);
   function startDrag(event) {
-    if (
-      !editMode ||
-      event.button !== 0 ||
-      busy ||
-      getComputedStyle(board).display !== "grid"
-    )
-      return;
-    const item = getState().dashboard.layout.find(
-        (i) => i.type === event.currentTarget.dataset.handle,
-      ),
-      rect = event.currentTarget.closest(".widget").getBoundingClientRect(),
-      bounds = board.getBoundingClientRect(),
-      gap = parseFloat(getComputedStyle(board).columnGap);
+    const resizing = Boolean(event.currentTarget.dataset.resize);
+    if ((!editMode && !resizing) || event.button !== 0 || busy) return;
+    event.preventDefault();
+    if (resizing && !editMode) {
+      editMode = true;
+      paint();
+    }
+    const type =
+      event.currentTarget.dataset.resize || event.currentTarget.dataset.handle;
+    const item = getState().dashboard.layout.find((item) => item.type === type);
+    const article = event.currentTarget.closest(".widget");
+    const rect = article.getBoundingClientRect(),
+      bounds = board.getBoundingClientRect();
+    const gap = parseFloat(getComputedStyle(board).columnGap);
     dragging = {
-      type: item.type,
+      type,
       original: item,
       x: item.x,
       y: item.y,
+      w: item.w,
+      h: item.h,
+      kind: resizing ? "resize" : "move",
+      compact: getComputedStyle(board).display !== "grid",
       valid: false,
       moved: false,
+      pointerId: event.pointerId,
       startX: event.clientX,
       startY: event.clientY,
       expected: JSON.stringify(getState().dashboard.layout),
       offsetX: event.clientX - rect.left,
       offsetY: event.clientY - rect.top,
-      left: bounds.left,
-      top: bounds.top,
       cell: (bounds.width - gap * 11) / 12 + gap,
-      row: parseFloat(getComputedStyle(board).gridAutoRows) + gap,
-      article: event.currentTarget.closest(".widget"),
+      row: 94,
+      article,
     };
-    event.currentTarget.setPointerCapture(event.pointerId);
-    dragging.article.classList.add("dragging");
+    try {
+      event.currentTarget.setPointerCapture(event.pointerId);
+    } catch {
+      /* Document listeners remain available. */
+    }
+    article.classList.add("dragging");
   }
   function drag(event) {
-    if (!dragging) return;
+    if (!dragging || event.pointerId !== dragging.pointerId) return;
+    event.preventDefault();
     const d = dragging;
     if (
       !d.moved &&
@@ -510,24 +521,79 @@ export function mountDashboard({ getState, mutate, flushNotes }) {
     if (!dragging) return;
     const d = dragging,
       bounds = board.getBoundingClientRect();
-    d.x = Math.max(
-      0,
-      Math.min(
-        12 - d.original.w,
-        Math.round((point.clientX - bounds.left - d.offsetX) / d.cell),
-      ),
-    );
-    d.y = Math.max(
-      0,
-      Math.min(
-        60,
-        Math.round((point.clientY - bounds.top - d.offsetY) / d.row),
-      ),
-    );
     try {
-      moveWidget(getState().dashboard.layout, d.type, d.x, d.y);
+      let next;
+      if (d.kind === "resize") {
+        d.w = Math.max(
+          3,
+          Math.min(
+            12 - d.original.x,
+            d.original.w + Math.round((point.clientX - d.startX) / d.cell),
+          ),
+        );
+        d.h = Math.max(
+          CATALOG[d.type].h,
+          Math.min(
+            8,
+            d.original.h + Math.round((point.clientY - d.startY) / d.row),
+          ),
+        );
+        next = arrangeWidget(
+          getState().dashboard.layout,
+          d.type,
+          d.original.x,
+          d.original.y,
+          { w: d.w, h: d.h },
+        );
+      } else if (d.compact) {
+        const target = [
+          ...board.querySelectorAll(".widget:not([hidden])"),
+        ].find((article) => {
+          const r = article.getBoundingClientRect();
+          return (
+            article !== d.article &&
+            point.clientX >= r.left &&
+            point.clientX <= r.right &&
+            point.clientY >= r.top &&
+            point.clientY <= r.bottom
+          );
+        });
+        if (!target) return;
+        const rect = target.getBoundingClientRect();
+        next = reorderWidget(
+          getState().dashboard.layout,
+          d.type,
+          target.dataset.widget,
+          point.clientY > rect.top + rect.height / 2,
+        );
+      } else {
+        d.x = Math.max(
+          0,
+          Math.min(
+            12 - d.original.w,
+            Math.round((point.clientX - bounds.left - d.offsetX) / d.cell),
+          ),
+        );
+        d.y = Math.max(
+          0,
+          Math.min(
+            60,
+            Math.round((point.clientY - bounds.top - d.offsetY) / d.row),
+          ),
+        );
+        next = arrangeWidget(getState().dashboard.layout, d.type, d.x, d.y);
+      }
+      d.next = next;
       d.valid = true;
-      place(d.article, { ...d.original, x: d.x, y: d.y });
+      for (const item of next) {
+        const article = $(`#panel-${item.type}`);
+        place(article, item);
+        article.style.order = item.y * 12 + item.x;
+      }
+      board.style.setProperty(
+        "--rows",
+        Math.max(3, ...next.map((item) => item.y + item.h)) + 2,
+      );
       d.article.classList.remove("blocked");
     } catch {
       d.valid = false;
@@ -547,73 +613,94 @@ export function mountDashboard({ getState, mutate, flushNotes }) {
     positionDrag(d.point);
     d.scrollFrame = requestAnimationFrame(autoScroll);
   }
-  async function endDrag() {
-    if (!dragging) return;
+  async function endDrag(event) {
+    if (!dragging || event.pointerId !== dragging.pointerId) return;
     const d = dragging;
     if (d.scrollFrame) cancelAnimationFrame(d.scrollFrame);
     dragging = null;
     d.article.classList.remove("dragging", "blocked");
-    if (!d.moved) {
+    if (d.moved && d.valid && d.next) {
+      busy = true;
+      try {
+        await mutate(
+          (s) => {
+            if (JSON.stringify(s.dashboard.layout) !== d.expected)
+              throw new Error(
+                "Layout wurde in einem anderen Tab geändert. Bitte erneut versuchen.",
+              );
+            return { ...s, dashboard: { ...s.dashboard, layout: d.next } };
+          },
+          d.kind === "resize"
+            ? "Größe gespeichert. Die anderen Widgets machen Platz."
+            : "Widget-Position gespeichert.",
+        );
+      } finally {
+        busy = false;
+        paint();
+      }
+    } else {
       paint();
-      return;
-    }
-    if (d.valid && (d.x !== d.original.x || d.y !== d.original.y))
-      await commitMove(d.type, d.x, d.y, null, d.expected);
-    else {
-      paint();
-      if (!d.valid)
+      if (d.moved && !d.valid)
         notify(
-          "Der Platz ist belegt. Das Widget bleibt an seiner bisherigen Position.",
+          "Nicht genug Platz. Die bisherige Anordnung bleibt erhalten.",
+          true,
         );
     }
   }
   function cancelDrag() {
-    if (dragging) {
-      if (dragging.scrollFrame) cancelAnimationFrame(dragging.scrollFrame);
-      dragging.article.classList.remove("dragging", "blocked");
-      dragging = null;
-      paint();
-    }
+    if (!dragging) return;
+    if (dragging.scrollFrame) cancelAnimationFrame(dragging.scrollFrame);
+    dragging.article.classList.remove("dragging", "blocked");
+    dragging = null;
+    paint();
   }
   window.addEventListener("resize", cancelDrag);
+  const directions = {
+    ArrowLeft: [-1, 0],
+    ArrowRight: [1, 0],
+    ArrowUp: [0, -1],
+    ArrowDown: [0, 1],
+  };
   function keyboardMove(event, type) {
-    if (!editMode || getComputedStyle(board).display !== "grid") return;
-    const dirs = {
-      ArrowLeft: [-1, 0],
-      ArrowRight: [1, 0],
-      ArrowUp: [0, -1],
-      ArrowDown: [0, 1],
-    };
-    if (!dirs[event.key]) return;
+    if (!editMode || !directions[event.key] || busy) return;
     event.preventDefault();
-    const item = getState().dashboard.layout.find((i) => i.type === type),
-      [dx, dy] = dirs[event.key];
-    commitMove(
-      type,
-      item.x + dx,
-      item.y + dy,
-      null,
-      JSON.stringify(getState().dashboard.layout),
-    );
+    const layout = getState().dashboard.layout,
+      item = layout.find((item) => item.type === type);
+    if (getComputedStyle(board).display !== "grid") {
+      const ordered = [...layout].sort((a, b) => a.y - b.y || a.x - b.x),
+        index = ordered.findIndex((item) => item.type === type);
+      const backward = ["ArrowLeft", "ArrowUp"].includes(event.key);
+      const target = ordered[index + (backward ? -1 : 1)];
+      if (target)
+        mutate(
+          (s) => ({
+            ...s,
+            dashboard: {
+              ...s.dashboard,
+              layout: reorderWidget(
+                s.dashboard.layout,
+                type,
+                target.type,
+                !backward,
+              ),
+            },
+          }),
+          "Reihenfolge gespeichert.",
+        );
+      return;
+    }
+    const [dx, dy] = directions[event.key];
+    commitMove(type, item.x + dx, item.y + dy, null, JSON.stringify(layout));
   }
-  function changeSize(type, size) {
-    const item = getState().dashboard.layout.find((i) => i.type === type),
-      spec = CATALOG[type];
-    commitMove(
-      type,
-      item.x,
-      item.y,
-      {
-        w:
-          size === "normal"
-            ? spec.w
-            : size === "wide"
-              ? Math.min(12, spec.w + 4)
-              : Math.min(12, spec.w + 4),
-        h: size === "large" ? Math.min(8, spec.h + 1) : spec.h,
-      },
-      JSON.stringify(getState().dashboard.layout),
-    );
+  function keyboardResize(event, type) {
+    if (!directions[event.key] || busy) return;
+    event.preventDefault();
+    const layout = getState().dashboard.layout,
+      item = layout.find((item) => item.type === type),
+      [dx, dy] = directions[event.key];
+    const w = Math.max(3, Math.min(12 - item.x, item.w + dx)),
+      h = Math.max(CATALOG[type].h, Math.min(8, item.h + dy));
+    commitMove(type, item.x, item.y, { w, h }, JSON.stringify(layout));
   }
   function paintWeather() {
     const weather = getState().dashboard.weather;

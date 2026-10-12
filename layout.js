@@ -1,3 +1,4 @@
+import { WALLPAPERS } from "./wallpapers.js";
 export const COLUMNS = 12;
 export const CATALOG = {
   clock: {
@@ -129,6 +130,80 @@ export function moveWidget(layout, type, x, y, size = null) {
     clean.map((item) => (item.type === type ? next : item)),
   );
 }
+// Keep the edited card anchored and let neighbours make room below it.
+export function arrangeWidget(layout, type, x, y, size = null) {
+  const clean = validateLayout(layout);
+  const original = clean.find((item) => item.type === type);
+  if (!original) throw new Error("Widget nicht gefunden.");
+  const edited = validateLayout([{ ...original, ...(size ?? {}), x, y }])[0];
+  const rest = clean
+    .filter((item) => item.type !== type)
+    .sort((a, b) => a.y - b.y || a.x - b.x);
+  const collisions = rest.filter((item) => intersects(edited, item));
+  // A direct swap makes rearranging equally sized neighbours intuitive.
+  if (!size && collisions.length === 1) {
+    const other = collisions[0];
+    if (
+      other.x === x &&
+      other.y === y &&
+      other.w === edited.w &&
+      other.h === edited.h
+    ) {
+      const swapped = clean.map((item) =>
+        item.type === type
+          ? edited
+          : item.type === other.type
+            ? { ...item, x: original.x, y: original.y }
+            : item,
+      );
+      try {
+        return validateLayout(swapped);
+      } catch {
+        /* Larger neighbours may occupy the old spot. */
+      }
+    }
+  }
+  const placed = [edited];
+  for (const item of rest) {
+    const next = { ...item };
+    while (placed.some((other) => intersects(next, other))) {
+      next.y++;
+      if (next.y > 60) throw new Error("Nicht genug Platz im Raster.");
+    }
+    placed.push(next);
+  }
+  return validateLayout(
+    clean.map((item) => placed.find((next) => next.type === item.type)),
+  );
+}
+export function reorderWidget(layout, type, targetType, after = false) {
+  const clean = validateLayout(layout).sort((a, b) => a.y - b.y || a.x - b.x);
+  const item = clean.find((item) => item.type === type);
+  if (!item || !clean.some((item) => item.type === targetType))
+    throw new Error("Widget nicht gefunden.");
+  if (type === targetType) return clean;
+  const others = clean.filter((item) => item.type !== type);
+  others.splice(
+    others.findIndex((item) => item.type === targetType) + (after ? 1 : 0),
+    0,
+    item,
+  );
+  let x = 0,
+    y = 0,
+    bottom = 0;
+  return validateLayout(
+    others.map((item) => {
+      if (x + item.w > 12) {
+        x = 0;
+        y = bottom;
+      }
+      const next = { ...item, x, y };
+      x += item.w;
+      bottom = Math.max(bottom, y + item.h);
+      return next;
+    }),
+  );
+}
 export function toggleWidget(layout, type, enabled) {
   const clean = validateLayout(layout);
   if (!Object.hasOwn(CATALOG, type)) throw new Error("Unbekanntes Widget.");
@@ -150,7 +225,13 @@ export function validateDashboard(
   const data = value === undefined ? structuredClone(DEFAULT_DASHBOARD) : value;
   if (
     !data ||
-    !["aurora", "mountains", "clean", "custom"].includes(data.wallpaper) ||
+    ![
+      "aurora",
+      "mountains",
+      "clean",
+      "custom",
+      ...Object.keys(WALLPAPERS),
+    ].includes(data.wallpaper) ||
     typeof data.customBackground !== "string" ||
     data.customBackground.length > 1500000 ||
     (data.customBackground &&

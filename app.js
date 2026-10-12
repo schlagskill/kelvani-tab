@@ -1,3 +1,4 @@
+import { WALLPAPERS, PIXABAY_LICENSE } from "./wallpapers.js";
 import { mountDashboard } from "./dashboard.js";
 import { toggleWidget } from "./layout.js";
 import {
@@ -474,6 +475,20 @@ try {
     .forEach((node) => (node.disabled = true));
 }
 
+for (const [key, photo] of Object.entries(WALLPAPERS)) {
+  const tile = el("div", "", "wallpaper-tile"),
+    preview = button(photo.title, null, "wallpaper-preview photo");
+  preview.dataset.wallpaper = key;
+  preview.style.backgroundImage = `linear-gradient(#06182d22,#06182d66),url("assets/wallpapers/${photo.file}")`;
+  preview.setAttribute("aria-pressed", "false");
+  const credit = el("a", `${photo.author} · Pixabay`, "photo-source");
+  credit.href = photo.source;
+  credit.target = "_blank";
+  credit.rel = "noopener noreferrer";
+  tile.append(preview, credit);
+  $("#wallpaper-gallery").append(tile);
+}
+$("#pixabay-license").href = PIXABAY_LICENSE;
 document
   .querySelectorAll("#wallpaper-gallery [data-wallpaper]")
   .forEach((node) =>

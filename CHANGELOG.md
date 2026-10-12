@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.1 - 2026-10-12
+
+- Make occupied grid positions usable: equal cards swap; resize and other moves push affected neighbours down.
+- Replace the top size menu with a lower-right pointer/keyboard resize grip and live raster feedback.
+- Enable compact-window pointer/keyboard reordering; use document-level pointer listeners.
+- Bundle five Pixabay backgrounds with individual photographer/source credits and a separate asset license notice.
+- Document eight future widget ideas and add six reflow/background regressions: 48 tests total.
+
 ## 0.3.0 - 2026-10-12
 
 - Replace the fixed page with twelve widgets and a persistent, collision-checked 12-column grid.
