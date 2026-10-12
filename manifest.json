@@ -1,0 +1,8 @@
+{
+  "manifest_version": 3,
+  "name": "Kelvani Tab",
+  "description": "Dein ruhiger neuer Tab: Suche, Lieblingslinks, Uhr und lokale Notizen.",
+  "version": "0.1.0",
+  "permissions": ["storage"],
+  "chrome_url_overrides": { "newtab": "index.html" }
+}
