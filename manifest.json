@@ -1,8 +1,16 @@
 {
   "manifest_version": 3,
-  "name": "Kelvani Tab",
-  "description": "Dein ruhiger neuer Tab: Suche, Lieblingslinks, Uhr und lokale Notizen.",
-  "version": "0.1.0",
-  "permissions": ["storage"],
-  "chrome_url_overrides": { "newtab": "index.html" }
+  "name": "KelvaniTab",
+  "description": "Deine Neuer-Tab-Seite: Suche, Schnellzugriffe, Aufgaben und Notizen. Lokal und ohne Konto.",
+  "version": "0.2.0",
+  "permissions": [
+    "storage"
+  ],
+  "chrome_url_overrides": {
+    "newtab": "index.html"
+  },
+  "minimum_chrome_version": "120",
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'none'; base-uri 'none'"
+  }
 }

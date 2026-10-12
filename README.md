@@ -1,41 +1,46 @@
-# Kelvani Tab
+# KelvaniTab
 
-A calm, free, open-source new-tab dashboard for Chrome and Edge. Version 0.1 includes a clock, search engine selection, favorite links, automatically saved notes, light/dark themes and validated JSON backup import/export. The interface is German.
+KelvaniTab ersetzt die Neuer-Tab-Seite in Chrome oder Edge. Version 0.2.0 bietet eine zentrale Websuche, Schnellzugriffe in Alltag/Entwicklung/Kreativ, Hinzufügen/Bearbeiten/Entfernen mit Rückgängig, Reihenfolge per Tastatur, optionale Aufgaben und automatisch gespeicherte Notizen. Darstellung: Hell, Dunkel oder System.
 
-## Install for development
+Kostenlos, MIT-lizenziert, ohne Konto oder Server. Oberfläche auf Deutsch. Dies ist eine installierbare **Entwicklungsversion**, noch kein Chrome-Web-Store-/Edge-Add-ons-Release.
 
-1. Download this repository as ZIP and extract it.
-2. Open `chrome://extensions` or `edge://extensions`.
-3. Enable Developer mode and choose **Load unpacked** / **Entpackt laden**.
-4. Select the folder containing `manifest.json`.
-5. Open a new tab and accept the browser's new-tab change prompt if shown.
+## In Chrome oder Edge installieren
 
-This is an unpacked development release, not a store listing. Existing extensions that replace the new-tab page can conflict. Disable the other new-tab replacement if needed.
+1. Repository als ZIP herunterladen und entpacken (oder das vorbereitete Erweiterungspaket verwenden).
+2. `chrome://extensions` bzw. `edge://extensions` öffnen und **Entwicklermodus** einschalten.
+3. **Entpackt laden** wählen und den Ordner mit `manifest.json` auswählen.
+4. Einen neuen Tab öffnen und die Änderung der Neuer-Tab-Seite bestätigen, falls der Browser nachfragt. Andere Neuer-Tab-Erweiterungen können kollidieren.
 
-## Privacy and permissions
+Zum Aktualisieren zuerst ein Backup exportieren, Dateien im selben Erweiterungsordner austauschen und die Erweiterung auf der Erweiterungsseite neu laden. Ein neuer Installationsordner kann eine andere Erweiterungs-ID und getrennte Daten erzeugen.
 
-The only permission is `storage`. The app uses `chrome.storage.local` for links, notes and settings. No analytics, remote fonts, remote scripts or favicon services. Searches are sent to the search engine you select only when you submit the search; visiting your favorite links sends the normal request to those websites. The Kelvani branding link opens kelvani.net only when clicked; the app does not depend on that website being hosted.
+## Datenschutz und Rechte
 
-Removing the extension removes its local data. Export a backup before uninstalling. Import replaces current data after an explicit prompt. Only HTTP(S) links without embedded credentials are allowed; executable and internal browser URLs are rejected. Treat backups as personal data because they include your notes and links.
+Nur `storage`. Keine History-, Bookmark- oder Website-Zugriffsrechte. Suche sendet den Suchbegriff erst beim Absenden an den gewählten Anbieter. Schnellzugriffe verwenden lokale Initialen; externe Favicon-Dienste werden nicht kontaktiert. Chrome-Neuer-Tab behält zunächst den Fokus in der Adressleiste. Inkognito-Neuer-Tab wird von Chrome nicht ersetzt.
 
-## Development
+Alle App-Assets und Schriften sind lokal. Keine Telemetrie, Remote-Scripts, Remote-Fonts oder Cloud-Synchronisierung. Der Markenlink öffnet kelvani.net nur auf Klick. Das Projekt benötigt keine gehostete Domain. Normales Öffnen einer gespeicherten Website kontaktiert diese Website.
 
-No dependency installation or build step is needed. Node.js 22+:
+Beim Deinstallieren gehen Erweiterungsdaten verloren: vorher exportieren. Backups enthalten persönliche Links/Notizen bzw. Tab-URLs und sollten privat bleiben. Es werden nur HTTP(S)-URLs ohne eingebettete Zugangsdaten akzeptiert.
+
+## Verhalten und Grenzen
+
+100 Links, 100 Aufgaben, 20.000 Notizzeichen, Import bis 2 MB. v0.1-Backups werden übernommen; alte Links gehören zu Alltag. Import ersetzt Daten erst nach Vorschau und ausdrücklicher Bestätigung. Notizen speichern nach 350 ms Tipp-Pause oder Fokuswechsel. Vor dem Schließen den Speicherstatus prüfen. Bei konkurrierenden Änderungen bleiben beide Versionen sichtbar, statt den anderen Tab still zu überschreiben.
+
+## Entwickeln und prüfen
+
+Keine Bibliotheksinstallation und kein Build-Schritt nötig. Node.js 22+:
 
 ```sh
 npm test
 ```
 
-Serve the repository using a static HTTP server for a UI preview; it uses localStorage in preview mode. Preview data is separate from extension storage, and the page displays a preview label. Opening HTML directly from disk is unsupported. The extension uses Web Locks to serialize same-origin storage changes; use a current browser.
+HTTP-Vorschau: `python -m http.server 8080 --bind 127.0.0.1`, dann http://127.0.0.1:8080 öffnen. Die Vorschau nutzt localStorage, Erweiterungen chrome.storage.local. Vorschau- und Erweiterungsdaten sind getrennt. HTML direkt vom Dateisystem zu öffnen wird nicht unterstützt. Web Locks serialisiert Änderungen mehrerer App-Tabs.
 
-## Validation and limits
+Automatisierte Tests prüfen Datenlogik und Speicherung, Migration, Gruppen und Notiz-Konflikte. UI-Abläufe werden in der HTTP-Browser-Vorschau geprüft. Das ersetzt keinen echten Installationstest in Chrome und Edge. Die verbleibenden nativen Prüfungen und Ergebnisse stehen in [TESTING.md](TESTING.md).
 
-Unit tests cover state validation, backups, safe URLs and encoded search queries. See TESTING.md for the native extension smoke test. Import limit: 2 MB; 100 links; 20,000 note characters. Notes save after a brief typing pause or on blur; check the saved indicator before closing the tab. Device synchronization and integration with KelvaniSwift are not included in 0.1.
+## Herkunft und Assets
 
-## Contributing
+Eigenständiger Kelvani-Code für schlagskill mit OpenAI-Coding-Unterstützung. Design nach dem Kelvani-Brandbook v3; Original-Logo vom Projektinhaber, unverändert. Keine fremde Repository-Historie und keine fremden Spendenlinks.
 
-Report a reproducible issue with browser version, expected and actual behavior. Do not include real notes, passwords or private URLs. Run the tests before proposing changes. Follow-up priorities: native extension smoke tests, keyboard-accessible backup controls, and explicit cross-tab note-conflict handling.
+Inter: https://rsms.me/inter/ · SIL Open Font License 1.1, siehe assets/Inter-OFL.txt. Code: MIT, siehe LICENSE. Die Logo-Datei wird für die Marke mitgeliefert; die Code-Lizenz ist keine Erlaubnis, als Kelvani aufzutreten. Toolbar-Symbol-Master und Store-Assets stehen noch aus.
 
-## Origin and license
-
-Newly written for schlagskill's Kelvani project with OpenAI coding assistance. No copied repository history, third-party branding or donation links. MIT license, see LICENSE. Kelvani is a project brand; no company registration or trademark claim is implied.
+Issues mit Browser-Version, Schritten sowie erwartetem/tatsächlichem Verhalten sind willkommen. Keine privaten Daten oder echten Backups veröffentlichen.

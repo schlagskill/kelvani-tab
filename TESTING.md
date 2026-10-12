@@ -1,16 +1,20 @@
-# Testing Kelvani Tab
+# KelvaniTab 0.2.0 - Validation
 
-Automated: `npm test` with Node.js 22+. Tests exercise real domain logic without third-party dependencies.
+## Verified automatically
 
-Before a stable release, load the unpacked extension in both Chrome and Edge and check:
+Node.js unit tests: 20 tests. Domain validation, unsafe URLs, JSON backups, failed writes, concurrent transactions , v0.1 migration, groups, reorder, tasks and note conflicts.
 
-1. New tabs display the dashboard, with a ticking local clock.
-2. Add a fictional HTTP(S) favorite; open another new tab and verify it persists. Remove it and check storage again.
-3. Save a fictional note, wait for GESPEICHERT, then reopen a new tab.
-4. Change theme and search engine, reopen and verify persistence.
-5. Export and re-import a backup. Cancel a replacement and confirm existing state stays unchanged.
-6. Reject a backup with executable URLs, invalid schema, duplicate IDs or oversized data.
-7. Test keyboard navigation, screen reader labels and narrow windows.
-8. Verify browser console has no CSP errors and the Network tab has no startup requests to third parties.
+## HTTP browser preview
 
-The HTTP preview exercises the UI fallback, not extension installation or chrome.storage.local. Do not describe a preview test as a native extension test.
+Verified: startup without console errors, add links, add tasks, persist notes/links across reload, theme settings. Narrow layouts are visually checked. Preview data are fictional. No native extension result is inferred from this.
+
+## Native Chrome / Edge release gate (still pending)
+
+1. Load unpacked in each browser and check new-tab override and initial address-bar focus.
+2. Check CSP/resource loading and no third-party startup requests.
+3. Add/edit/reorder grouped links, tasks, widget visibility, notes, themes and search. Check persistence across new tabs.
+4. Edit the same note concurrently in two extension tabs; preserve conflict drafts; export and restore a backup.
+5. Import invalid, oversized and old-version backups. Cancel preview; ensure no changes. Test quota errors without false success.
+6. Full keyboard navigation, dialog return focus, screenreader labels, 200% text and 320 CSS px.
+
+Not yet validated: native Chrome/Edge installation, real tabs API behavior, a full screenreader audit, store review or WCAG conformance. No cloud sync or full Workona feature parity is claimed.
