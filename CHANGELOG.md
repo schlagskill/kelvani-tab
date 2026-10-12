@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.4 - 2026-10-12
+
+- Remove the dashboard footer label and redundant appearance button. Background settings and photo credits remain in Settings.
+
 ## 0.3.3 - 2026-10-12
 
 - Add the owner-provided blue K symbol as square PNG extension/action icons in 16, 24, 32, 48 and 128 px, plus a page favicon.

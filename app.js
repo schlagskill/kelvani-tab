@@ -386,7 +386,7 @@ $("#notes").addEventListener("input", () => {
   timer = setTimeout(() => flushNotes(), 350);
 });
 $("#notes").addEventListener("blur", () => flushNotes());
-for (const selector of ["#customize", "#hide-widgets"])
+for (const selector of ["#customize"])
   $(selector).addEventListener("click", () => openSettings("appearance"));
 $("#settings-form").addEventListener("submit", async (event) => {
   event.preventDefault();
