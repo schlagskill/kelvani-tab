@@ -52,3 +52,7 @@ Issues mit Browser-Version und reproduzierbaren Schritten sind willkommen. Keine
 Weitere Widget-Ideen und Prioritäten: [WIDGET-IDEAS.md](WIDGET-IDEAS.md).
 
 Erweiterungsliste, Browserleiste und Tab-Symbol verwenden das vom Inhaber gelieferte blaue K-Symbol. Bei einem Update die Erweiterung neu laden. Die Symbole ändern die Gestaltung innerhalb der App nicht.
+
+## Verbesserungen in 0.3.5
+
+Der Kalender aktualisiert seine Heute-Markierung nach Mitternacht und folgt Monats-/Jahreswechseln. Ein bewusst aufgerufener anderer Monat bleibt erhalten. Die Fokusdauer wird sofort gespeichert und kann während einer aktiven oder pausierten Sitzung erst nach Zurücksetzen geändert werden. Vor einer Suche oder einem Linkwechsel wartet Tab auf das Speichern der Notiz; bei noch ungesicherten Notizen schützt eine Browserwarnung vor versehentlichem Schließen.

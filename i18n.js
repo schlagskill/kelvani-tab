@@ -1,4 +1,8 @@
 const EN = {
+  "Wähle zwischen 1 und 180 Minuten.": "Choose between 1 and 180 minutes.",
+  "Setze den laufenden Timer zuerst zurück.": "Reset the active timer first.",
+  "Zum Ändern der Dauer den Timer zurücksetzen.":
+    "Reset the timer to change its duration.",
   Einstellungen: "Settings",
   "Widgets hinzufügen": "Add widgets",
   "Layout anpassen": "Edit layout",

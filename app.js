@@ -324,13 +324,38 @@ wireDialogs();
 $("#demo").hidden = extensionMode;
 tick();
 setInterval(tick, 60000);
-$("#search").addEventListener("submit", (event) => {
+$("#search").addEventListener("submit", async (event) => {
   event.preventDefault();
   try {
-    location.assign(searchUrl($("#query").value, $("#engine").value));
+    const destination = searchUrl($("#query").value, $("#engine").value);
+    if (await flushNotes()) location.assign(destination);
   } catch (error) {
     notify(error.message, true);
   }
+});
+document.addEventListener("click", async (event) => {
+  const link = event.target.closest?.("a[href]");
+  if (
+    !link ||
+    event.defaultPrevented ||
+    event.button !== 0 ||
+    event.ctrlKey ||
+    event.metaKey ||
+    event.shiftKey ||
+    event.altKey ||
+    link.target === "_blank" ||
+    link.hasAttribute("download") ||
+    (!dirty && !notePending)
+  )
+    return;
+  event.preventDefault();
+  const destination = link.href;
+  if (await flushNotes()) location.assign(destination);
+});
+window.addEventListener("beforeunload", (event) => {
+  if (!dirty && !notePending) return;
+  event.preventDefault();
+  event.returnValue = "";
 });
 $("#engine").addEventListener("change", () => {
   const engine = $("#engine").value;

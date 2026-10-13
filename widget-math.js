@@ -70,3 +70,23 @@ export function timerSeconds(focus, minutes, now = Date.now()) {
       ? focus.remaining
       : minutes * 60;
 }
+export function localDayKey(date) {
+  return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+}
+export function calendarAfterRollover(view, previous, now) {
+  return localDayKey(previous) !== localDayKey(now) &&
+    view.year === previous.getFullYear() &&
+    view.month === previous.getMonth()
+    ? { year: now.getFullYear(), month: now.getMonth() }
+    : { ...view };
+}
+export function changeFocusMinutes(dashboard, minutes, now = Date.now()) {
+  if (!Number.isInteger(minutes) || minutes < 1 || minutes > 180)
+    throw new Error("Wähle zwischen 1 und 180 Minuten.");
+  if (
+    dashboard.focus &&
+    timerSeconds(dashboard.focus, dashboard.focusMinutes, now) > 0
+  )
+    throw new Error("Setze den laufenden Timer zuerst zurück.");
+  return { ...dashboard, focusMinutes: minutes, focus: null };
+}

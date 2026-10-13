@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.5 — 2026-10-13
+
+- Refresh the calendar at local midnight, including month/year rollover, without resetting a deliberately browsed month.
+- Persist valid focus-duration edits immediately. Protect running/paused sessions from duration changes and explain how to reset them.
+- Save note drafts before search/link navigation; warn before closing while a note write is still pending.
+- Use a nighttime greeting before 05:00 and from 23:00, in German and English.
+- 57 automated tests and isolated HTTP UI checks; native Chrome/Edge installation remains pending.
+
 ## 0.3.4 - 2026-10-12
 
 - Remove the dashboard footer label and redundant appearance button. Background settings and photo credits remain in Settings.

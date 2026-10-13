@@ -9,7 +9,14 @@ import {
   reorderWidget,
   toggleWidget,
 } from "./layout.js";
-import { calculate, calendarMonth, timerSeconds } from "./widget-math.js";
+import {
+  calculate,
+  calendarMonth,
+  timerSeconds,
+  localDayKey,
+  calendarAfterRollover,
+  changeFocusMinutes,
+} from "./widget-math.js";
 import { $, el, button, notify, showDialog } from "./ui.js";
 
 export function mountDashboard({ getState, mutate, flushNotes }) {
@@ -17,7 +24,8 @@ export function mountDashboard({ getState, mutate, flushNotes }) {
     dragging = null,
     busy = false,
     month = new Date().getMonth(),
-    year = new Date().getFullYear();
+    year = new Date().getFullYear(),
+    lastCalendarDate = new Date();
   const board = $("#board");
   function panel(type, body) {
     const article = el("article", "", `widget widget-${type}`);
@@ -104,6 +112,27 @@ export function mountDashboard({ getState, mutate, flushNotes }) {
   minutes.value = "25";
   minutes.setAttribute("aria-label", "Fokusdauer in Minuten");
   minutes.id = "focus-minutes";
+  minutes.addEventListener("input", () => {
+    const value = Number(minutes.value);
+    if (
+      !minutes.disabled &&
+      Number.isInteger(value) &&
+      value >= 1 &&
+      value <= 180
+    )
+      mutate((s) => ({
+        ...s,
+        dashboard: changeFocusMinutes(s.dashboard, value),
+      }));
+  });
+  minutes.addEventListener("change", async () => {
+    const value = Number(minutes.value);
+    const saved = await mutate((s) => ({
+      ...s,
+      dashboard: changeFocusMinutes(s.dashboard, value),
+    }));
+    if (!saved) minutes.value = getState().dashboard.focusMinutes;
+  });
   const timerStart = button("Start", toggleTimer, "primary");
   timerStart.id = "focus-start";
   focusForm.append(
@@ -228,7 +257,13 @@ export function mountDashboard({ getState, mutate, flushNotes }) {
     )
       $("#countdown-dialog").close();
   });
-  function renderCalendar() {
+  function renderCalendar(now = new Date()) {
+    ({ year, month } = calendarAfterRollover(
+      { year, month },
+      lastCalendarDate,
+      now,
+    ));
+    lastCalendarDate = now;
     $(".calendar-title").textContent = new Date(
       year,
       month,
@@ -240,7 +275,6 @@ export function mountDashboard({ getState, mutate, flushNotes }) {
       ? ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
       : ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"])
       grid.append(el("span", day, "weekday"));
-    const now = new Date();
     for (const value of calendarMonth(year, month).cells) {
       const cell = el("span", value ?? "", "calendar-day");
       if (
@@ -249,7 +283,10 @@ export function mountDashboard({ getState, mutate, flushNotes }) {
         year === now.getFullYear()
       ) {
         cell.classList.add("today");
-        cell.setAttribute("aria-label", `Heute, ${value}.`);
+        cell.setAttribute(
+          "aria-label",
+          `${locale() === "en-GB" ? "Today" : "Heute"}, ${value}.`,
+        );
       }
       grid.append(cell);
     }
@@ -264,6 +301,7 @@ export function mountDashboard({ getState, mutate, flushNotes }) {
     const state = getState();
     if (!state) return;
     const now = new Date();
+    if (localDayKey(now) !== localDayKey(lastCalendarDate)) renderCalendar(now);
     $("#digital-time").textContent = now.toLocaleTimeString(locale(), {
       hour: "2-digit",
       minute: "2-digit",
@@ -280,11 +318,17 @@ export function mountDashboard({ getState, mutate, flushNotes }) {
     $(".second-hand").style.rotate = `${now.getSeconds() * 6}deg`;
     const hour = now.getHours();
     $("#greeting").textContent =
-      `${state.dashboard.language === "en" ? (hour < 11 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening") : hour < 11 ? "Guten Morgen" : hour < 18 ? "Guten Tag" : "Guten Abend"}${state.dashboard.name ? ", " + state.dashboard.name : "."}`;
+      `${state.dashboard.language === "en" ? (hour < 5 || hour >= 23 ? "Good night" : hour < 11 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening") : hour < 5 || hour >= 23 ? "Gute Nacht" : hour < 11 ? "Guten Morgen" : hour < 18 ? "Guten Tag" : "Guten Abend"}${state.dashboard.name ? ", " + state.dashboard.name : "."}`;
     const seconds = timerSeconds(
       state.dashboard.focus,
       state.dashboard.focusMinutes,
     );
+    minutes.disabled = Boolean(state.dashboard.focus && seconds > 0);
+    minutes.title = minutes.disabled
+      ? state.dashboard.language === "en"
+        ? "Reset the timer to change its duration."
+        : "Zum Ändern der Dauer den Timer zurücksetzen."
+      : "";
     $("#focus-time").textContent =
       `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
     $("#focus-start").textContent =
@@ -814,5 +858,9 @@ export function mountDashboard({ getState, mutate, flushNotes }) {
     }
   });
   setInterval(tick, 1000);
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) tick();
+  });
+  window.addEventListener("focus", tick);
   return { paint, catalog };
 }

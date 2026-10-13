@@ -1,8 +1,8 @@
-# KelvaniTab 0.3.2 — Validation
+# KelvaniTab 0.3.5 — Validation
 
 ## Automated checks
 
-55 Node.js tests cover URL validation/normalized-length limits, backups, failed writes, concurrent transactions, old-data migration, groups, tasks, note conflicts, grid bounds/collisions, all twelve catalogue widgets, hiding without data loss, arithmetic without eval, leap-year calendars, timer deadlines and weather response validation.
+57 Node.js tests cover URL validation/normalized-length limits, backups, failed writes, concurrent transactions, old-data migration, groups, tasks, note conflicts, grid bounds/collisions, all twelve catalogue widgets, hiding without data loss, arithmetic without eval, leap-year calendars, timer deadlines and weather response validation.
 
 ## HTTP browser preview
 
@@ -32,3 +32,7 @@ Verified the compact Settings menu, all four entries, keyboard navigation/Escape
 All six color schemes were selected and their distinct rendered card colors checked. Transparency was changed to 40% and the rendered alpha was 0.6; settings persisted across reload. Saving toast disappeared with a 2000 ms timer (observed UI roundtrip including the click: approximately 2.2 s). It uses fixed positioning and creates no dashboard row. Errors and undo notices retain different handling.
 
 Seven preference regressions cover 50 unique bilingual thoughts, random selection bounds, same thought across languages, migration, six palettes and full transparency backup roundtrips, invalid preferences, notice durations and UI string translations. Native Edge update still needs verification; no new permissions are required.
+
+## Follow-up audit — 2026-10-13
+
+Used an isolated localhost origin to avoid changing existing preview data. Verified duration changes update the displayed timer and survive reload; active/paused sessions disable duration editing. Verified a freshly typed note survives immediate navigation through a local shortcut. Calendar today marking matches the clock. Unit tests cover midnight/year rollover while preserving a browsed month, invalid duration and running/paused session protection.
