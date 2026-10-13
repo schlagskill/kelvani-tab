@@ -1,3 +1,7 @@
+## 0.3.9
+
+K-Logo für alle Erweiterungssymbole. Transparenter Namensbereich; Plus und Zahnrad statt beschrifteter Toolbar-Buttons.
+
 # UI release 0.3.8
 
 Text-Wortmarke ohne Logo; Toolbar-Buttons verwenden Widget-Transparenz und Glass-Farben.

@@ -1,4 +1,4 @@
-UI release 0.3.7 · gemeinsame Produktfamilie
+UI release 0.3.9 · gemeinsame Produktfamilie
 
 Gemeinsame UI-Quelle und Synchronisierung: assets/ui/README.md.
 
@@ -60,3 +60,10 @@ Erweiterungsliste, Browserleiste und Tab-Symbol verwenden das vom Inhaber gelief
 ## Verbesserungen in 0.3.5
 
 Der Kalender aktualisiert seine Heute-Markierung nach Mitternacht und folgt Monats-/Jahreswechseln. Ein bewusst aufgerufener anderer Monat bleibt erhalten. Die Fokusdauer wird sofort gespeichert und kann während einer aktiven oder pausierten Sitzung erst nach Zurücksetzen geändert werden. Vor einer Suche oder einem Linkwechsel wartet Tab auf das Speichern der Notiz; bei noch ungesicherten Notizen schützt eine Browserwarnung vor versehentlichem Schließen.
+
+
+## Aktuelle Änderungen 0.3.9
+
+K-Logo für alle Erweiterungssymbole. Transparenter Namensbereich; Plus und Zahnrad statt beschrifteter Toolbar-Buttons.
+
+Nach dem Ersetzen der Dateien die entpackte Erweiterung im Browser neu laden. Das ZIP allein aktualisiert keine bereits installierte Erweiterung.

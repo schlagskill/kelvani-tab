@@ -8,3 +8,7 @@ body[data-wallpaper="clean"] .text-wordmark{color:#092e5d}
 @media(forced-colors:active){.wordmark-accent{background:none;color:CanvasText}}
 dialog label,dialog .hint{font-size:var(--ui-sm)}
 .settings-menu button{text-align:left;justify-content:flex-start}
+
+.dashboard-actions .text-wordmark{background:rgb(var(--glass-rgb)/var(--card-opacity));color:var(--text);padding:9px 14px;border:1px solid #ffffff22;border-radius:12px;backdrop-filter:blur(22px);box-shadow:0 10px 30px #06152d16;line-height:20px}.dashboard-actions .toolbar-icon{width:40px;min-width:40px;height:40px;padding:0;display:inline-flex;justify-content:center;align-items:center;border-radius:12px}
+
+.dashboard-actions .toolbar-icon svg{width:20px!important;height:20px!important;flex-shrink:0}
