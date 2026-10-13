@@ -2,7 +2,7 @@ UI release 0.3.9 · gemeinsame Produktfamilie
 
 Gemeinsame UI-Quelle und Synchronisierung: assets/ui/README.md.
 
-# KelvaniTab
+# KelvaniTab (Kelvani.net)
 
 KelvaniTab ersetzt die Neuer-Tab-Seite in Chrome oder Edge durch ein persönliches Widget-Dashboard. Version 0.3.3: blaue Hintergründe, ruhige Karten und ein veränderbares Raster. Kostenlos, MIT-lizenziert, ohne Konto. Dies ist eine installierbare Entwicklungsversion; noch kein Store-Release.
 
