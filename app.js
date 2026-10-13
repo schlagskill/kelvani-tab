@@ -1,9 +1,9 @@
-import { enableTranslations, setLanguage, locale, translate } from "./i18n.js";
+import { enableTranslations, setLanguage, locale, translate } from "./i18n.js?v=0.3.7-ui1";
 import {
   COLOR_SCHEMES,
   motivation,
   randomMotivationIndex,
-} from "./preferences.js";
+} from "./preferences.js?v=0.3.7";
 import { WALLPAPERS, PIXABAY_LICENSE } from "./wallpapers.js";
 import { mountDashboard } from "./dashboard.js";
 import { toggleWidget } from "./layout.js";
@@ -26,7 +26,7 @@ import {
   download,
   readBackup,
   wireDialogs,
-} from "./ui.js";
+} from "./ui.js?v=0.3.7-ui1";
 let state,
   group = "everyday",
   editing = false,

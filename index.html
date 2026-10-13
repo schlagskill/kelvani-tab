@@ -7,12 +7,12 @@
     <link rel="icon" type="image/png" href="assets/icons/icon32.png" />
     <title>Neuer Tab · KelvaniTab</title>
     <link rel="stylesheet" href="style.css" />
-  </head>
+  <link rel="stylesheet" href="assets/ui/tokens.css?v=1.0"><link rel="stylesheet" href="assets/ui/components.css?v=1.0"><link rel="stylesheet" href="family-layout.css?v=0.3.8"><script type="module" src="assets/ui/review.js?v=1.1"></script></head>
   <body>
     <header class="dashboard-bar">
       <p id="header-motivation" class="header-motivation"></p>
       <div class="dashboard-actions">
-        <span class="wordmark">KelvaniTab</span>
+        <span class="wordmark text-wordmark" aria-label="KelvaniTab">Kelvani<span class="wordmark-accent">Tab</span></span>
         <button id="widgets-button" class="toolbar-button">＋ Widgets</button>
         <button
           id="edit-layout"
@@ -434,6 +434,6 @@
         >Wetterdaten: Open-Meteo</a
       >
     </dialog>
-    <script type="module" src="app.js"></script>
+    <script type="module" src="app.js?v=0.3.7-ui1"></script>
   </body>
 </html>

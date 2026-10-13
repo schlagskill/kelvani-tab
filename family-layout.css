@@ -1,0 +1,10 @@
+/* Keep the dashboard composition, colors, transparency and widget grid intact. */
+.widget-tools,.calendar-heading,.task-list{--ui-control-size:var(--ui-control-compact)}
+ .dashboard-actions .text-wordmark{font-family:var(--ui-font);font-size:18px;font-weight:600;letter-spacing:-.5px;white-space:nowrap;align-self:center;margin-right:4px;color:inherit;background:none;padding:0}
+.wordmark-accent{background:linear-gradient(90deg,#125bea 0%,#4ab4fa 100%);background-clip:text;-webkit-background-clip:text;color:transparent}
+body[data-wallpaper="clean"] .text-wordmark{color:#092e5d}
+.dashboard-actions .toolbar-button{background:rgb(var(--glass-rgb) / var(--card-opacity))!important;color:var(--text)!important;border-color:#ffffff22!important;backdrop-filter:blur(22px);box-shadow:0 10px 30px #06152d16}
+.dashboard-actions .toolbar-button:hover:not(:disabled),.dashboard-actions .toolbar-button[aria-expanded=true]{background:rgb(var(--glass-rgb) / var(--card-opacity))!important;box-shadow:0 0 0 1px var(--accent),0 10px 30px #06152d16}
+@media(forced-colors:active){.wordmark-accent{background:none;color:CanvasText}}
+dialog label,dialog .hint{font-size:var(--ui-sm)}
+.settings-menu button{text-align:left;justify-content:flex-start}

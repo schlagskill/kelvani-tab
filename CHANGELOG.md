@@ -1,3 +1,13 @@
+# UI release 0.3.8
+
+Text-Wortmarke ohne Logo; Toolbar-Buttons verwenden Widget-Transparenz und Glass-Farben.
+
+# UI release 0.3.7
+
+Gemeinsame Controls und Dialoge; Widget-Raster und Hintergründe beibehalten.
+
+Gemeinsame Quelle: work/kelvani-ui. Siehe assets/ui/README.md.
+
 # Changelog
 
 ## 0.3.5 — 2026-10-13

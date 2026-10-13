@@ -17,7 +17,7 @@ import {
   calendarAfterRollover,
   changeFocusMinutes,
 } from "./widget-math.js";
-import { $, el, button, notify, showDialog } from "./ui.js";
+import { $, el, button, notify, showDialog } from "./ui.js?v=0.3.7-ui1";
 
 export function mountDashboard({ getState, mutate, flushNotes }) {
   let editMode = false,

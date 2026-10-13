@@ -1,0 +1,21 @@
+@font-face{font-family:Kelvani Inter;src:url('fonts/Inter-Regular.woff2') format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:Kelvani Inter;src:url('fonts/Inter-SemiBold.woff2') format('woff2');font-weight:600;font-display:swap}
+:root{
+ --ui-font:'Kelvani Inter',Inter,system-ui,sans-serif;
+ --ui-xs:11px;--ui-sm:12px;--ui-base:14px;--ui-heading:20px;--ui-title:28px;
+ --ui-leading:1.5;--ui-weight:400;--ui-strong:600;
+ --ui-space-1:4px;--ui-space-2:8px;--ui-space-3:12px;--ui-space-4:16px;--ui-space-5:24px;--ui-space-6:32px;
+ --ui-control-size:36px;--ui-control-compact:32px;--ui-control-large:44px;
+ --ui-radius-control:8px;--ui-radius-card:12px;--ui-radius-dialog:16px;
+ --ui-border-size:1px;--ui-icon-size:18px;--ui-icon-stroke:1.75;--ui-wordmark-height:32px;
+ --ui-shadow-dialog:0 16px 56px #10203126;--ui-shadow-menu:0 8px 24px #10203114;
+ --ui-error:#b42318;--ui-success:#187044;
+}
+body,.board,dialog{
+ --ui-text:var(--text,#292929);--ui-muted:var(--muted,#657080);
+ --ui-surface:var(--surface,#fff);--ui-border:var(--line,#e1e5eb);
+ --ui-raised:var(--raised,var(--soft,#f5f6f8));--ui-brand:var(--accent,#c6212b);
+ --ui-brand-hover:var(--hover,var(--accent,#c6212b));--ui-on-brand:var(--on-accent,#fff);
+}
+body[data-compact],body[data-ui-density=compact]{--ui-control-size:var(--ui-control-compact)}
+body[data-theme=night],html[data-theme=dark] body{--ui-error:#ffaea6;--ui-success:#a8e6c0}

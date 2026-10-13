@@ -1,0 +1,15 @@
+{
+  "source": "work/kelvani-ui",
+  "generated_by": "work/implementation/sync_kelvani_ui.py",
+  "sha256": {
+    "components.css": "a18a62a92babb71e25df5d594ebb0ffc5626757829d6e2122a34ea8d8acb1982",
+    "feedback.js": "2abc2f3e1d441b64860954d7a4a6624ae6c2e4fc1ab98b36660509f8ac78f53d",
+    "icons.js": "9d452bf548cb35926ca0f1cd5ec038f585198b30d702534aedb08ce566ebf14f",
+    "README.md": "dc08488ee054464ab3d18fa9e3026a9b1dbfe4bf4223b7e214ad2becb50985d0",
+    "review.js": "33b30e0f3b3bedddac3652cea556f1ee55ade14d1b6fd9c5bdd48476ea9bf097",
+    "tokens.css": "59aa21d765a327409f734d68514e478d9a3c76d3e5bb27de751a177ce561fd33",
+    "fonts/Inter-OFL.txt": "5b9321a4298cfeb6b34354164a1c3afc3db114569984c502b9b35d988fd58c57",
+    "fonts/Inter-Regular.woff2": "338239f6b590b8ced3bf857654d32da3fd3663294cd3003651ed57aa3abd7aa1",
+    "fonts/Inter-SemiBold.woff2": "5013f48d77ab627b1db7c2415914284ef09abc3f60a8e0d0d8f3cd1bfebefb5e"
+  }
+}

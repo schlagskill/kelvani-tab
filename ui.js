@@ -1,3 +1,5 @@
+import "./assets/ui/review.js";
+import { icon } from './assets/ui/icons.js?v=1.0';
 import { noticeDuration } from "./preferences.js";
 export const $ = (selector) => document.querySelector(selector);
 export function el(tag, text = "", className = "") {
@@ -9,6 +11,11 @@ export function el(tag, text = "", className = "") {
 export function button(text, action, className = "secondary") {
   const node = el("button", text, className);
   node.type = "button";
+  const glyphs = { '＋':'plus', '+':'plus', '×':'close', '‹':'left', '›':'right' };
+  if (className.includes('icon-button') && glyphs[text]) {
+    node.replaceChildren(icon(glyphs[text]));
+    node.setAttribute('aria-label', text === '×' ? 'Entfernen' : text === '‹' ? 'Vorheriger Eintrag' : text === '›' ? 'Nächster Eintrag' : 'Hinzufügen');
+  }
   if (action) node.addEventListener("click", action);
   return node;
 }
@@ -27,6 +34,7 @@ export function notify(message, error = false, undo = null) {
 export function showDialog(selector) {
   const dialog = $(selector),
     trigger = document.activeElement;
+  dialog.querySelectorAll('[data-close].icon-button').forEach(node => node.replaceChildren(icon('close')));
   dialog.addEventListener(
     "close",
     () => trigger?.isConnected && trigger.focus(),

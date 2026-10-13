@@ -314,7 +314,9 @@ export function enableTranslations() {
     "script,style,textarea,.shortcut-title,.shortcut-icon,#tasks label span,#weather-results,#countdown-caption,#greeting,#date,.calendar-title,#world-time,#header-motivation,#panel-inspiration blockquote,#photo-credit";
   const observer = new MutationObserver(apply);
   function observe() {
-    observer.observe(document.body, {
+    const body = document.body;
+    if (!body || body.nodeType !== 1) return;
+    observer.observe(body, {
       childList: true,
       subtree: true,
       characterData: true,
@@ -323,6 +325,7 @@ export function enableTranslations() {
     });
   }
   function apply() {
+    if (!document.body) return;
     observer.disconnect();
     const walker = document.createTreeWalker(
       document.body,

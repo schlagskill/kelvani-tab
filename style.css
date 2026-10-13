@@ -1080,3 +1080,5 @@ body .clock-face {
     width: 245px;
   }
 }
+
+.dashboard-actions .product-wordmark{width:158px;height:auto;display:block;background:#fff;border-radius:5px;padding:3px;flex-shrink:0}

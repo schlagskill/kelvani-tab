@@ -1,3 +1,4 @@
+import { NOTICE_DURATIONS } from './assets/ui/feedback.js?v=1';
 export const COLOR_SCHEMES = {
   blue: {
     label: "Blau",
@@ -37,7 +38,7 @@ export const COLOR_SCHEMES = {
   },
 };
 export function noticeDuration(error = false, undo = false) {
-  return error ? null : undo ? 8000 : 2000;
+  return error ? NOTICE_DURATIONS.error : undo ? NOTICE_DURATIONS.undo : NOTICE_DURATIONS.success;
 }
 export const MOTIVATIONS = [
   [
