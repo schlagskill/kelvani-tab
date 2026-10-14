@@ -1082,3 +1082,5 @@ body .clock-face {
 }
 
 .dashboard-actions .product-wordmark{width:158px;height:auto;display:block;background:#fff;border-radius:5px;padding:3px;flex-shrink:0}
+
+.layout-presets{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 18px}

@@ -1,4 +1,9 @@
 const EN = {
+  'Minimal':'Minimal',
+  'Lernen':'Study',
+  'Arbeit':'Work',
+  'Layout rückgängig':'Undo layout',
+  'Layout gespeichert.':'Layout saved.',
   "Wähle zwischen 1 und 180 Minuten.": "Choose between 1 and 180 minutes.",
   "Setze den laufenden Timer zuerst zurück.": "Reset the active timer first.",
   "Zum Ändern der Dauer den Timer zurücksetzen.":

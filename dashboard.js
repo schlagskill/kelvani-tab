@@ -19,7 +19,47 @@ import {
 } from "./widget-math.js";
 import { $, el, button, notify, showDialog } from "./ui.js?v=0.3.7-ui1";
 
-export function mountDashboard({ getState, mutate, flushNotes }) {
+import { createLayoutHistory, LAYOUT_PRESETS } from './layout-history.js';
+export function mountDashboard({ getState, mutate: persist, flushNotes }) {
+  const history = createLayoutHistory();
+  async function mutate(change, message) {
+    let before, after;
+    const ok = await persist(s => {
+      const next = change(s);
+      before = structuredClone(s.dashboard.layout);
+      after = structuredClone(next.dashboard.layout);
+      return next;
+    }, message);
+    if(ok && before) history.record(before, after);
+    if(undo) undo.disabled = !history.available;
+    return ok;
+  }
+  const undo = button('↶', async () => {
+    if(busy || dragging) return;
+    busy = true;
+    try {
+      if(!(await flushNotes())) return;
+      const ok = await persist(s => {
+        const layout = history.previous(s.dashboard.layout);
+        if(!layout) return s;
+        return {...s, widgets:{...s.widgets,tasks:layout.some(i=>i.type==='tasks'),notes:layout.some(i=>i.type==='notes')}, dashboard:{...s.dashboard,layout}};
+      });
+      if(ok) {history.consume(); catalog();}
+    } finally {busy = false; undo.disabled = !history.available;}
+  }, 'icon-button');
+  undo.disabled = true;
+  undo.title = 'Layout rückgängig';
+  undo.setAttribute('aria-label','Layout rückgängig');
+  $('#edit-layout').after(undo);
+  const presets = el('div','','layout-presets');
+  for(const [key,label] of [['minimal','Minimal'],['study','Lernen'],['work','Arbeit']]) {
+    presets.append(button(label,async()=>{
+      if(busy || dragging || !(await flushNotes())) return;
+      await mutate(s=>{const layout=structuredClone(LAYOUT_PRESETS[key]);return {...s,widgets:{...s.widgets,tasks:layout.some(i=>i.type==='tasks'),notes:layout.some(i=>i.type==='notes')},dashboard:{...s.dashboard,layout}};},'Layout gespeichert.');
+      catalog();
+    },'secondary'));
+  }
+  $('#widget-catalog').before(presets);
   let editMode = false,
     dragging = null,
     busy = false,
@@ -424,6 +464,7 @@ export function mountDashboard({ getState, mutate, flushNotes }) {
     $("#edit-layout").hidden = !editMode;
     $("#edit-layout").setAttribute("aria-pressed", editMode);
     $("#edit-layout").textContent = editMode ? "Fertig" : "Layout bearbeiten";
+    undo.hidden = !editMode;
     board.classList.toggle("editing", editMode);
     $("#layout-help").hidden = !editMode;
     if (document.activeElement !== $("#focus-minutes"))

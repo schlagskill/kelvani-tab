@@ -1,3 +1,7 @@
+# 0.4.0
+
+Layout presets and reversible layout edits.
+
 ## 0.3.9
 
 K-Logo für alle Erweiterungssymbole. Transparenter Namensbereich; Plus und Zahnrad statt beschrifteter Toolbar-Buttons.
