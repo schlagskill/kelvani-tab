@@ -15,7 +15,7 @@ test("default layout is bounded and collision-free", () => {
   assert.deepEqual(validateLayout(DEFAULT_LAYOUT), DEFAULT_LAYOUT);
 });
 test("moving snaps to integer coordinates and keeps other cards untouched", () => {
-  const next = moveWidget(DEFAULT_LAYOUT, "focus", 4, 6);
+  const next = moveWidget(DEFAULT_LAYOUT, "focus", 4, 8);
   assert.equal(next.find((w) => w.type === "focus").x, 4);
   assert.deepEqual(
     next.find((w) => w.type === "clock"),
@@ -95,7 +95,7 @@ test("dashboard, positions and settings survive note writes and backup roundtrip
     dashboard: {
       ...structuredClone(DEFAULT_DASHBOARD),
       name: "Ada",
-      layout: moveWidget(DEFAULT_LAYOUT, "focus", 4, 6),
+      layout: moveWidget(DEFAULT_LAYOUT, "focus", 4, 8),
     },
   };
   const next = saveNotes(state, "note", "");
@@ -127,3 +127,5 @@ test("invalid opacity, timezones and timer fields are rejected", () => {
   ])
     assert.throws(() => validateDashboard({ ...DEFAULT_DASHBOARD, ...fields }));
 });
+
+test('default composition fills both sides and upgrades only the unchanged old preset',async()=>{const {upgradeDefaultLayout}=await import('../layout.js');const legacy=DEFAULT_LAYOUT.map(item=>item.type==='links'?{...item,h:2}:['tasks','notes'].includes(item.type)?{...item,y:3,h:3}:{...item});assert.deepEqual(upgradeDefaultLayout(legacy),DEFAULT_LAYOUT);const custom=legacy.map(item=>item.type==='focus'?{...item,y:9}:item);assert.deepEqual(upgradeDefaultLayout(custom),custom);for(const type of ['tasks','notes','focus']){const card=DEFAULT_LAYOUT.find(item=>item.type===type);assert.equal(card.y+card.h,8);}});

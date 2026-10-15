@@ -67,6 +67,8 @@ export function mountDashboard({ getState, mutate: persist, flushNotes }) {
     year = new Date().getFullYear(),
     lastCalendarDate = new Date();
   const board = $("#board");
+  const fitDefault=()=>board.style.setProperty('--board-top',(board.getBoundingClientRect().top+window.scrollY)+'px');
+  window.addEventListener('resize',fitDefault);
   function panel(type, body) {
     const article = el("article", "", `widget widget-${type}`);
     article.dataset.widget = type;
@@ -461,6 +463,8 @@ export function mountDashboard({ getState, mutate: persist, flushNotes }) {
         Math.max(3, ...data.layout.map((i) => i.y + i.h)) + (editMode ? 2 : 0),
       ),
     );
+    board.dataset.defaultLayout=String(!editMode&&data.layout.length===DEFAULT_LAYOUT.length&&DEFAULT_LAYOUT.every(item=>data.layout.some(other=>['type','x','y','w','h'].every(key=>item[key]===other[key]))));
+    fitDefault();
     $("#edit-layout").hidden = !editMode;
     $("#edit-layout").setAttribute("aria-pressed", editMode);
     $("#edit-layout").textContent = editMode ? "Fertig" : "Layout bearbeiten";
@@ -580,7 +584,7 @@ export function mountDashboard({ getState, mutate: persist, flushNotes }) {
       offsetX: event.clientX - rect.left,
       offsetY: event.clientY - rect.top,
       cell: (bounds.width - gap * 11) / 12 + gap,
-      row: 94,
+      row: parseFloat(getComputedStyle(board).gridTemplateRows)+parseFloat(getComputedStyle(board).rowGap),
       article,
     };
     try {

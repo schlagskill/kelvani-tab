@@ -73,12 +73,17 @@ export const CATALOG = {
 export const DEFAULT_LAYOUT = [
   { type: "clock", x: 0, y: 0, w: 4, h: 3 },
   { type: "search", x: 4, y: 0, w: 8, h: 1 },
-  { type: "links", x: 4, y: 1, w: 8, h: 2 },
+  { type: "links", x: 4, y: 1, w: 8, h: 3 },
   { type: "calendar", x: 0, y: 3, w: 4, h: 3 },
-  { type: "tasks", x: 4, y: 3, w: 4, h: 3 },
-  { type: "notes", x: 8, y: 3, w: 4, h: 3 },
+  { type: "tasks", x: 4, y: 4, w: 4, h: 4 },
+  { type: "notes", x: 8, y: 4, w: 4, h: 4 },
   { type: "focus", x: 0, y: 6, w: 4, h: 2 },
 ];
+export function upgradeDefaultLayout(layout){
+ const legacy=DEFAULT_LAYOUT.map(item=>item.type==='links'?{...item,h:2}:['tasks','notes'].includes(item.type)?{...item,y:3,h:3}:{...item});
+ const unchanged=layout.length===legacy.length&&legacy.every(old=>layout.some(item=>['type','x','y','w','h'].every(key=>item[key]===old[key])));
+ return unchanged?structuredClone(DEFAULT_LAYOUT):layout;
+}
 export const DEFAULT_DASHBOARD = {
   layout: DEFAULT_LAYOUT,
   wallpaper: "aurora",

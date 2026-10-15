@@ -10,14 +10,14 @@ import {
 } from "../layout.js";
 import { WALLPAPERS } from "../wallpapers.js";
 test("dragging onto equally sized occupied card swaps grid positions", () => {
-  const next = arrangeWidget(DEFAULT_LAYOUT, "tasks", 8, 3);
+  const next = arrangeWidget(DEFAULT_LAYOUT, "tasks", 8, 4);
   assert.deepEqual(
     next.find((i) => i.type === "tasks"),
-    { type: "tasks", x: 8, y: 3, w: 4, h: 3 },
+    { type: "tasks", x: 8, y: 4, w: 4, h: 4 },
   );
   assert.deepEqual(
     next.find((i) => i.type === "notes"),
-    { type: "notes", x: 4, y: 3, w: 4, h: 3 },
+    { type: "notes", x: 4, y: 4, w: 4, h: 4 },
   );
   assert.deepEqual(
     next.find((i) => i.type === "clock"),
@@ -33,7 +33,7 @@ test("enlarging pushes overlapping neighbours down without losing cards", () => 
   );
   assert.equal(next.find((i) => i.type === "search").y, 4);
   assert.equal(next.find((i) => i.type === "links").y, 5);
-  assert.equal(next.find((i) => i.type === "notes").y, 7);
+  assert.equal(next.find((i) => i.type === "notes").y, 8);
   assert.doesNotThrow(() => validateLayout(next));
 });
 test("occupied space with different sizes reflows instead of rejecting", () => {

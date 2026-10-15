@@ -15,7 +15,13 @@ export const EMPTY = {
   dashboard: structuredClone(DEFAULT_DASHBOARD),
 };
 export function safeUrl(input) {
-  const url = new URL(input);
+  if(typeof input!=="string"||!input.trim())throw new Error("Bitte eine Webadresse eingeben.");
+  let address=input.trim();
+  const hasScheme=/^[a-z][a-z\d+.-]*:/i.test(address);
+  const hostWithPort=/^[^/?#:\s]+:\d+(?:[/?#]|$)/.test(address);
+  if(address.startsWith('//'))address='https:'+address;
+  else if(!hasScheme||hostWithPort)address='https://'+address;
+  const url = new URL(address);
   if (
     !["http:", "https:"].includes(url.protocol) ||
     url.username ||

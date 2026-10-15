@@ -51,3 +51,5 @@ test("search query encoded safely", () => {
   assert.throws(() => searchUrl(" ", "google"));
   assert.throws(() => searchUrl("a", "unknown"));
 });
+
+test('bare domains use HTTPS while explicit HTTP remains unchanged',()=>{assert.equal(safeUrl(' youtube.com '),'https://youtube.com/');assert.equal(safeUrl('http://example.com/page'),'http://example.com/page');assert.equal(safeUrl('example.com:8443/page'),'https://example.com:8443/page');assert.equal(addLink(EMPTY,{title:'Video',url:'youtube.com'},'bare').links[0].url,'https://youtube.com/');});

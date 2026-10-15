@@ -7,7 +7,7 @@
     <link rel="icon" type="image/png" href="assets/icons/icon32.png" />
     <title>Neuer Tab · KelvaniTab</title>
     <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="assets/ui/tokens.css?v=1.0"><link rel="stylesheet" href="assets/ui/components.css?v=1.0"><link rel="stylesheet" href="family-layout.css?v=0.3.9"><script type="module" src="assets/ui/review.js?v=1.1"></script></head>
+  <link rel="stylesheet" href="assets/ui/tokens.css?v=1.0"><link rel="stylesheet" href="assets/ui/components.css?v=1.0"><link rel="stylesheet" href="family-layout.css?v=0.3.9"><script type="module" src="assets/ui/review.js?v=1.1"></script><link rel="stylesheet" href="night-design.css?v=0.5.1"></head>
   <body>
     <header class="dashboard-bar">
       <p id="header-motivation" class="header-motivation"></p>
@@ -154,7 +154,7 @@
         ><label
           >Webadresse<input
             name="url"
-            type="url"
+            type="text" inputmode="url" autocomplete="url" spellcheck="false"
             maxlength="4096"
             placeholder="https://…"
             required /></label
@@ -432,6 +432,6 @@
         >Wetterdaten: Open-Meteo</a
       >
     </dialog>
-    <script type="module" src="app.js?v=0.3.7-ui1"></script>
+    <script type="module" src="app.js?v=0.5.1"></script>
   </body>
 </html>

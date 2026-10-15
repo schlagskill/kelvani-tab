@@ -5,7 +5,7 @@ import {
   randomMotivationIndex,
 } from "./preferences.js?v=0.3.7";
 import { WALLPAPERS, PIXABAY_LICENSE } from "./wallpapers.js";
-import { mountDashboard } from "./dashboard.js";
+import { mountDashboard } from "./dashboard.js?v=0.5.1";
 import { toggleWidget } from "./layout.js";
 import {
   GROUPS,

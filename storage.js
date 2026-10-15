@@ -1,4 +1,5 @@
 import { EMPTY, validateState } from "./core.js";
+import { upgradeDefaultLayout } from "./layout.js";
 const KEY = "kelvani-tab.v1";
 export const extensionMode = Boolean(
   globalThis.chrome?.runtime?.id && globalThis.chrome?.storage?.local,
@@ -7,7 +8,9 @@ export async function load() {
   const data = extensionMode
     ? (await chrome.storage.local.get(KEY))[KEY]
     : JSON.parse(localStorage.getItem(KEY) || "null");
-  return validateState(data ?? structuredClone(EMPTY));
+  const clean=validateState(data ?? structuredClone(EMPTY));
+  clean.dashboard.layout=upgradeDefaultLayout(clean.dashboard.layout);
+  return clean;
 }
 export async function update(change) {
   if (!navigator.locks)
