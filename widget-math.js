@@ -5,11 +5,12 @@ export function calculate(input) {
     .replace(/,/g, ".")
     .replace(/×/g, "*")
     .replace(/÷/g, "/")
-    .replace(/−/g, "-")
-    .replace(/\s/g, "");
-  if (!source || /[^\d.+*/()%-]/.test(source))
+    .replace(/−/g, "-");
+  if (!source.trim() || /[^\d.+*/()%\s-]/.test(source))
     throw new Error("Erlaubt: Zahlen, +, −, *, /, % und Klammern.");
   const tokens = source.match(/(?:\d+(?:\.\d*)?|\.\d+)|[+*/()%-]/g);
+  if (!tokens || tokens.join("") !== source.replace(/\s/g, ""))
+    throw new Error("Ungültige Rechnung.");
   let index = 0;
   const factor = () => {
     const token = tokens[index++];

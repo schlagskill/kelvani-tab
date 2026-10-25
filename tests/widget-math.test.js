@@ -94,3 +94,13 @@ test("duration edits update idle/completed timers but do not overwrite running o
     null,
   );
 });
+
+test("calculator rejects separated numbers and unconsumed decimal points", () => {
+  for (const input of ["1 2 + 3", "2 .5", "1. 5", "1\t2", "1\n2", "1..", "2 + 3..", "."])
+    assert.throws(() => calculate(input), Error, input);
+});
+test("calculator preserves whitespace around operators and unary signs", () => {
+  assert.equal(calculate("  1,5  +  .5  "), 2);
+  assert.equal(calculate("12 × ( 8 + 4 )"), 144);
+  assert.equal(calculate("- 5 + + 2"), -3);
+});
