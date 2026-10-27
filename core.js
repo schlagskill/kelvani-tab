@@ -109,7 +109,7 @@ export function validateState(value) {
 export function editLink(state, input, id) {
   const clean = validateState(state),
     url = safeUrl(input.url),
-    group = input.group ?? "everyday";
+    group = input.group ?? clean.links.find((link) => link.id === id)?.group;
   if (
     clean.links.some(
       (link) => link.id !== id && link.url === url && link.group === group,
@@ -121,7 +121,7 @@ export function editLink(state, input, id) {
   return validateState({
     ...clean,
     links: clean.links.map((link) =>
-      link.id === id ? { ...link, ...input, id, url } : link,
+      link.id === id ? { ...link, ...input, id, url, group } : link,
     ),
   });
 }

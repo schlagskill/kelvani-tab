@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { EMPTY, addLink, validateState, searchUrl, safeUrl } from "../core.js";
+import { EMPTY, addLink, editLink, validateState, searchUrl, safeUrl } from "../core.js";
 test("new dashboard validates", () =>
   assert.deepEqual(validateState(structuredClone(EMPTY)), EMPTY));
 test("links are added immutably", () => {
@@ -53,3 +53,14 @@ test("search query encoded safely", () => {
 });
 
 test('bare domains use HTTPS while explicit HTTP remains unchanged',()=>{assert.equal(safeUrl(' youtube.com '),'https://youtube.com/');assert.equal(safeUrl('http://example.com/page'),'http://example.com/page');assert.equal(safeUrl('example.com:8443/page'),'https://example.com:8443/page');assert.equal(addLink(EMPTY,{title:'Video',url:'youtube.com'},'bare').links[0].url,'https://youtube.com/');});
+
+test("partial link edits check duplicates in the preserved group", () => {
+  let state = addLink(EMPTY, { title: "A", url: "a.example", group: "creative" }, "a");
+  state = addLink(state, { title: "B", url: "b.example", group: "creative" }, "b");
+  assert.throws(() => editLink(state, { title: "B", url: "a.example" }, "b"));
+  state = addLink(state, { title: "C", url: "c.example", group: "everyday" }, "c");
+  const next = editLink(state, { title: "Updated", url: "c.example" }, "b");
+  assert.equal(next.links[1].group, "creative");
+  assert.equal(next.links[1].url, "https://c.example/");
+  assert.equal(state.links[1].url, "https://b.example/");
+});
