@@ -30,6 +30,8 @@ export function calculate(input) {
     while (["*", "/", "%"].includes(tokens[index])) {
       const op = tokens[index++],
         right = factor();
+      if ((op === "/" || op === "%") && right === 0)
+        throw new Error("Division durch null ist nicht erlaubt.");
       value =
         op === "*" ? value * right : op === "/" ? value / right : value % right;
     }

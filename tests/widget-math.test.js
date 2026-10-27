@@ -104,3 +104,10 @@ test("calculator preserves whitespace around operators and unary signs", () => {
   assert.equal(calculate("12 × ( 8 + 4 )"), 144);
   assert.equal(calculate("- 5 + + 2"), -3);
 });
+
+test("calculator rejects division by zero even when a later operation hides it", () => {
+  for (const input of ["1 / (1 / 0)", "0 / (1 / 0)", "1 / (2 / (3 - 3))", "1 % 0", "1 / -0"])
+    assert.throws(() => calculate(input), Error, input);
+  assert.equal(calculate("0 / 2"), 0);
+  assert.equal(calculate("1 / (1 / 2)"), 2);
+});
